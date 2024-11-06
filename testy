@@ -1,5 +1,0 @@
-import platform, os
-print('\tOperating system: ', platform.system())
-print('\tWorking directory: ', os.getcwd())
-if 'CONDA_PREFIX' in os.environ.keys():
-    print('\tPython environment: ', os.environ['CONDA_PREFIX'])
