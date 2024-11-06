@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "MIE-2024"
+version = "2024.11.06"
+dependencies = [
+    "pandas >= 2.2.2",
+    "requests >= 2.32.2",
+    "biopython >= 1.84"
+]
+requires-python = ">=3.9"
+authors = [
+    {name = "E.B.", email = "ebrajkov@purdue.edu"}
+]
+maintainers = [
+    {name = "E.B.", email = "ebrajkov@purdue.edu"}
+]
+
+description = "lab test version of blast → synthesis automation"
+keywords = []
+classifiers = []
+
+[project.urls]
+Repository = "https://github.com/Parkinson-NP/MIE-2024"
