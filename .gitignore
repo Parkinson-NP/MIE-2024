@@ -1,6 +1,6 @@
-/do_program1.py
-/do_program2.py
-/do_program3.py
+do_program1.py
+do_program2.py
+do_program3.py
 /requirements.txt
 /setup.py
-/user_input.py
+user_input.py
