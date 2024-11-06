@@ -22,14 +22,14 @@ Quick installation employs both Conda and Git. If you have not worked with these
 > Git: <https://git-scm.com/doc>
 
 ### Python Virtual Environment
-We reccomend creating a Conda environment with Python 3.12:
+We reccomend creating a Conda environment with Python 3.12, using the following lines in a Conda initialized terminal:
 ```Bash
-conda create -n projectname python=3.12
-conda activate projectname
+conda create -n MIE-2024 python=3.12
+conda activate MIE-2024
 ```
 With this environment activated, all non-antiSMASH dependencies can be installed with the following command:
 ```Bash
-pip install git+https://github.com/LAB/PROJECT.git
+pip install git+https://github.com/Parkinson-NP/MIE-2024
 ```
 
 ### Unix Compatible OS or Environment
