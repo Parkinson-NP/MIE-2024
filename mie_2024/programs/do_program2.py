@@ -6,7 +6,7 @@ Created on Mon Aug 19 13:44:16 2024
 """
 
 import sys, datetime, subprocess, platform, os
-from src.user_input import user_input
+from user_input import user_input
 when = str(datetime.datetime.now())[:17].replace(' ', '_').replace(':', '.')
 
 welcome = '''This program combs through results of program1 (or any other directory containing .fasta files) and automates product prediction by antiSMASH.

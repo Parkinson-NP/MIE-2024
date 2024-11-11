@@ -63,3 +63,12 @@ In a Unix terminal as a non-root user, the following commands will be adequate t
 	conda deactivate
 ```
 # Use Instructions
+## Programs 1 and 3
+Programs 1 and 3 are OS independent - these can be called from any terminal with your Conda environment activated.
+```Bash
+	(MIE-2024) user_terminalprompt python3 do_program1.py
+	(MIE-2024) user_terminalprompt python3 do_program2.py
+```
+Once started, you will be prompted to view an optional welcome message before continuing to enter mandatory and optional parameters.
+
+## Program 2

@@ -16,7 +16,7 @@ import requests #2.32.2
 import Bio.Entrez as Entrez
 from Bio.Entrez import esearch, elink, efetch
 
-from src.user_input import user_input
+from mie_2024.user_input import user_input
 
 when = str(datetime.datetime.now())[:17].replace(' ', '_').replace(':', '.')
 welcome ='''This program takes a list of NCBI protein accessions and uses NCBI's E-Utilities to find the corresponding nucleotide record.

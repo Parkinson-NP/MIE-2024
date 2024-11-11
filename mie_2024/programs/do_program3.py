@@ -8,7 +8,7 @@ Created on Tue Aug 13 23:06:04 2024
 
 import os, json, datetime, sys
 import pandas as pd
-from src.user_input import user_input
+from user_input import user_input
 
 when = str(datetime.datetime.now())[:17].replace(' ', '_').replace(':', '.')
 def user_information(when):
