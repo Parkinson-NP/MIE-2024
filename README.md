@@ -62,35 +62,44 @@ conda deactivate
 *antiSMASH* denotes the environment name (customizable), while *antismash* indicates the necessary package to Bioconda. antiSMASH is not installed in the same environment as MIE-2024 to allow use of other antiSMASH integrations with possible dependency clashes.
 Bioconda is one of 3 supported installation methods from antiSMASH. Instructions for Docker or manual installation can be found at <https://docs.antismash.secondarymetabolites.org/install/>.
 # Use Instructions
-## Programs 1 and 3
-Programs 1 and 3 are OS independent - these can be called from any terminal with your Conda environment activated.
+## Program 1: Filtering BLAST-P Results
+Program 1 utilizes Entrez to programatically access NCBI protein records and link to their corresponding nucleotide record. Each nucleotide record is surveyed for products of interest supplied by the user, which in combination with other parameters excludes nucleotide records and regions not associated with desirable product features from further processing. Records with no hits are not discarded, instead saved as JSON files in case further analysis is needed.
+
+<img src="images/p1_11112024.svg" width=400>
+
+Programs 1 is OS independent; it can be called from any terminal with your Conda environment activated.
 ```bash
 conda activate MIE-2024
 python3 do_program1.py
-python3 do_program2.py
 ```
 Once initiated, you will be prompted to view an optional welcome message before continuing to enter mandatory and optional parameters. This message can also be used to confirm you are working in the intended environment.
 
 For any user input, you will have the opportunity to affirm your choice and/or seek additional information about the parameter's requirements and usage. If at any point you supply an invalid input, you will be reprompted with additional detail. This information can also be called from the dictionary ```user_input.explanations``` on demand.
 
-## Program 2
-Program 2 utilizes antiSMASH, and must be run from a Unix terminal in the antiSMASH environment. To run program 2 as it exists in your initial environment, you will first need to identify the neccessary path and navigate to it. 
-For WSL users, this means searching your mounted drive, 
-```/mnt/c```. Extending this initial path with more specificity, for example ```/mnt/c/users/username/anaconda3/envs``` can help cut down on extraneous results.
+## Program 2: Product Prediction with antiSMASH
+Program 2 utilizes antiSMASH to predict and annotate the nucleotide regions isolated in Program 1. Program 2 acts as a substitute for normal command line interface with antiSMASH, running many records consecutively with the same parameters.
+
+<img src="images/p2_11122024.svg" width =400>
+
+In contrast to Program 1 and Program 3, product prediction requires a Unix terminal with the antiSMASH environment activated. To access Program 2 as installed in your initial environment, you will first need to identify the neccessary path and navigate to it. 
 
 ```bash
 conda activate antiSMASH
 find /initial/path | grep "mie_2024/programs"
 cd /full/path/returned/mie_2024/programs
 ```
-With program 2 now available in the antiSMASH environment, it can be called like programs 1 and 3. 
+For WSL users, this means searching your mounted drive, 
+```/mnt/c```. Extending this initial path with more specificity, for example ```/mnt/c/users/username/anaconda3/envs``` can help reduce extraneous results.
+
+With Program 2 now available in the antiSMASH environment, it can be called and interacted with identically to Program 1. 
 ```bash
 python3 do_program2.py
 ```
-To avoid risking dependency clashes between these and any antiSMASH integration programs, please refrain from running programs 1 and 3 in the antiSMASH environment.
+To avoid risking dependency clashes between these and any other antiSMASH integration programs, please refrain from running Program 1 and Program 3 in the antiSMASH environment.
 
-
-<img src="images/p1_11112024.svg" width=400>
-<img src="imagess/p2_11122024.svg" width =400>
+## Program 3: Product Synthesis Guide
+Program 3 does:
 <img src="images/p3_11112024.svg" width=400>
+
+Expect to do:
 
