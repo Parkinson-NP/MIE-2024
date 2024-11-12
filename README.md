@@ -1,5 +1,5 @@
-# Project Title
-## Headline
+# MIE-2024
+## Automated filtering and product prediction for synthesis of NRPS/PKS natural products
 
 * some info about the piece, ex. accompanying paper and authors
 * beta version for the Parkinson Lab
@@ -18,7 +18,6 @@ The package relies on antiSMASH (<https://docs.antismash.secondarymetabolites.or
 ## Installation Guide
 Quick installation employs both Conda and Git. If you have not worked with these tools before, their documentation is linked below.
 > Conda: <https://docs.conda.io/projects/conda/en/latest/>
->
 > Git: <https://git-scm.com/doc>
 
 ### Python Virtual Environment
