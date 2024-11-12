@@ -1,0 +1,8 @@
+Hide .svg files
+
+Where to put flowchart?
+
+Opinion on 1/3, 2 sectioning
+
+How to (if) to provide a demo/test files; if so Where
+
