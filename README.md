@@ -37,11 +37,10 @@ AntiSMASH 7.1 does not offer support for the Windows OS. There are many options 
 
  As an example, setup of Windows Subsystem Linux (WSL) with Ubuntu is used here. For additional WSL tips and FAQs, official instructions are available at <https://learn.microsoft.com/en-us/windows/wsl/install>.
 
-[//]: # (Depending on your software version, you may need to enable WSL before moving forwards.
-WSL can be enabled via Administrator commands in Windows Powershell, or graphically in Windows Control Panel.)  
+[//]: # (Give WSL instructions in detail??)  
+[//]: # (Depending on your software version, you may need to enable WSL before moving forwards. WSL can be enabled via Administrator commands in Windows Powershell, or graphically in Windows Control Panel.)  
 [//]: # (*Virtual Machine Platform* and *Windows Subsystem for Linux* must be enabled under **Windows Control Panel > Programs > Programs and Features > Turn Windows features on or off**. With the required features enabled, installation can be then be carried out graphically in the Microsoft Store, or with the following command in Windows Powershell:)
-[//]: # (Bash
-wsl --install -d Ubuntu)  
+[//]: # (Bash wsl --install -d Ubuntu)  
 
 
 If choosing to install your distribution from the Microsoft Store, please ensure you have set up a Linux user account before proceeding. Your terminal prompt should show your device name and newly established Unix username like so:
@@ -66,6 +65,7 @@ Bioconda is one of 3 supported installation methods from antiSMASH. Instructions
 ## Programs 1 and 3
 Programs 1 and 3 are OS independent - these can be called from any terminal with your Conda environment activated.
 ```bash
+conda activate MIE-2024
 python3 do_program1.py
 python3 do_program2.py
 ```
@@ -76,7 +76,7 @@ For any user input, you will have the opportunity to affirm your choice and/or s
 ## Program 2
 Program 2 utilizes antiSMASH, and must be run from a Unix terminal in the antiSMASH environment. To run program 2 as it exists in your initial environment, you will first need to identify the neccessary path and navigate to it. 
 For WSL users, this means searching your mounted drive, 
-```/mnt/c/users/username```. Extending this initial path with more specificity, for example ```/mnt/c/users/username/anaconda3/envs``` can help cut down on extraneous results.
+```/mnt/c```. Extending this initial path with more specificity, for example ```/mnt/c/users/username/anaconda3/envs``` can help cut down on extraneous results.
 
 ```bash
 conda activate antiSMASH
@@ -89,7 +89,8 @@ python3 do_program2.py
 ```
 To avoid risking dependency clashes between these and any antiSMASH integration programs, please refrain from running programs 1 and 3 in the antiSMASH environment.
 
-\
-<img src="p1_11112024.svg" width=400>
 
+<img src="p1_11112024.svg" width=400>
+<img src="p2_11122024.svg" width =400>
 <img src="p3_11112024.svg" width=400>
+
