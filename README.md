@@ -42,14 +42,14 @@ AntiSMASH 7.1 does not offer support for the Windows OS. There are many options 
 [//]: # (Bash wsl --install -d Ubuntu)  
 
 
-If choosing to install your distribution from the Microsoft Store, please ensure you have set up a Linux user account before proceeding. Your terminal prompt should show your device name and newly established Unix username like so:
+If choosing to install your distribution from the Microsoft Store, please ensure you have set up a Linux account before proceeding. Your terminal prompt should show your device name and newly established Unix username:
  ```Bash
  USER@DEVICE:~$ 
  ```
 This terminal prompt indicates you are sucessfully operating in a Unix environment, where you will not have direct access to  your Windows files or installations. To continue with Quick Installation, you'll need to configure Anaconda or Miniconda for your new Unix environment. Miniconda will provide the necessary packages for the least storage space, and can be installed as instructed in *Quick command line install* for Linux: <https://docs.anaconda.com/miniconda/>.
 
 ## AntiSMASH Local
-In a Unix terminal as a non-root user, the following commands will be adequate to configure Bioconda and install antiSMASH local in a new Conda environment. *antiSMASH* denotes the environment name (customizable), while *antismash* indicates the necessary package to Bioconda. antiSMASH is not installed in the same environment as MIE-2024 in anticipation of other antiSMASH integrations with possible dependency clashes.
+In a Unix terminal as a non-root user, the following commands will be adequate to configure Bioconda and install antiSMASH in a new Conda environment.
 ```Bash
 conda config --add channels bioconda
 conda config --add channels conda-forge 
@@ -59,6 +59,7 @@ conda activate antismash
 download-antismash-databases
 conda deactivate
 ```
+*antiSMASH* denotes the environment name (customizable), while *antismash* indicates the necessary package to Bioconda. antiSMASH is not installed in the same environment as MIE-2024 to allow use of other antiSMASH integrations with possible dependency clashes.
 Bioconda is one of 3 supported installation methods from antiSMASH. Instructions for Docker or manual installation can be found at <https://docs.antismash.secondarymetabolites.org/install/>.
 # Use Instructions
 ## Programs 1 and 3
@@ -89,7 +90,7 @@ python3 do_program2.py
 To avoid risking dependency clashes between these and any antiSMASH integration programs, please refrain from running programs 1 and 3 in the antiSMASH environment.
 
 
-<img src="p1_11112024.svg" width=400>
-<img src="p2_11122024.svg" width =400>
-<img src="p3_11112024.svg" width=400>
+<img src="images/p1_11112024.svg" width=400>
+<img src="imagess/p2_11122024.svg" width =400>
+<img src="images/p3_11112024.svg" width=400>
 
