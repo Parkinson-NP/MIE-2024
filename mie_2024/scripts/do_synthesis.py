@@ -47,9 +47,10 @@ def antismash_json_to_AA(filename):
             product_regions = record['modules']['antismash.modules.nrps_pks']['region_predictions']
             
             for product_n, prediction in product_regions.items():
+                smiles = prediction[0]['smiles']
                 polymer_raw = prediction[0]['polymer'].split(' + ')
                 polymer_formatted = []
-                polymer_dict = {}
+                polymer_dict = {'SMILES': smiles}
                 for p in polymer_raw:
                     p = p[1:-1].split(' - ')
                     polymer_formatted.extend(p)

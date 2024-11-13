@@ -10,7 +10,7 @@ explanations = {'email': '''Accessing NCBI's E-Utilities through BioPython requi
                 'api_use': '''Using an NCBI API key allows for an allowed query rate upgrade from 3/sec to 10/sec. API keys are available upon request free of charge, see https://support.nlm.nih.gov/knowledgebase/article/KA-05317/en-us for instructions.''',
                 'api_key' : '''Your API key should be a string of numbers and letters, available via your NCBI profile.''',
                 'path_in': '''A CSV file containing protein accessions in the NCBI protein database. If your header row contains the '.' character, it will be mistaken for an accession. Files with and without headers are supported. If your file path as pasted is not recognized, first ensure you are utilizing the correct slash notation for your operating system (/path/to/file vs \\path\\to\\file). If issues persist, try using double slashes to catch any accidental unicode interpretations (writing /path/to/file as //path//to//file).''',
-                'col' : '''Column number containing protein accessions in input csv.'''
+                'col' : '''Column number containing protein accessions in input csv.''',
                 'save_preference': f'You will need this save location for the next step, product prediction. By default, your outputs will be saved to {os.getcwd()}\\program1_out\\job_id.',
                 'path_out' : '''You will need this save location for the next step, product prediction. If operating with a virtual machine, please ensure you will be able to access this path from your UNIX system.''', 
                 'keyword' : '''A word or word fragment to be found in the '/product' field of a CDS in a GenBanl feature table. Keywords are not case sensitive.''',
