@@ -57,7 +57,6 @@ def antismash_json_to_AA(filename):
                     polymer_dict[f'AA_{i+1}'] = p
                     
                 products[f'{nucleotide_source}_product{product_n}'] = polymer_dict
-               # products.append(polymer_dict)
     return products
 
 def save_results(path_in, path_out):

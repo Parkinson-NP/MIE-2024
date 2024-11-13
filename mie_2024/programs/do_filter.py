@@ -6,10 +6,10 @@ Created on Fri Sep 13 14:18:52 2024
 """
 
 #included with python 3.12
-import os, time, datetime, json, platform
+import os, time, datetime, json, platform, csv
+
 
 #via !pip install [name]
-import pandas as pd #2.2.2
 import requests #2.32.2
 
 #via !pip install biopython 
@@ -57,7 +57,10 @@ def user_information(when):
                             gate_type='value'
                             ).value_received
     p1 = path_in.split('/')[-1].strip('.csv') + f'---{when}p1'
-    
+    col = int(user_input(name='col',
+                     prompt='Protein Accession column number: ',
+                     gat_type='value'
+                     ).value_received) 
     #SAVE LOCATION
     save_preference = user_input(name='save_preference', 
                                  prompt='Would you like to save outputs to a location other than the default folder? ', 
@@ -89,7 +92,7 @@ def user_information(when):
                        gate_type='value'
                        ).value_received)
     
-    return path_in, path_out, compiled_searches, margin, p1
+    return path_in, col, path_out, compiled_searches, margin, p1
 
 def search_parameters():
     search_parameters = {}
@@ -174,12 +177,19 @@ def accession_link(queries, db_pep, db_nuc):
 
 def fetch_CDS(acc_links, db_nuc):
     start=time.time()
+    
     nucs = requests.get(efetch(db= db_nuc, 
                                id= acc_links.keys(),
                                idtype='acc', 
                                rettype='fasta_cds_na', 
                                retmode='txt'
                                ).url, stream=True)
+    nucs = urllib.request.urlopen(efetch(db= db_nuc, 
+                               id= acc_links.keys(),
+                               idtype='acc', 
+                               rettype='fasta_cds_na', 
+                               retmode='txt'
+                               ).url)
 
     records ={}
     accumulate_record = str()
@@ -339,9 +349,9 @@ def process_selection(selection, compiled_searches, margin, path_out, db_pep, db
         elapsed += clip_t
     return elapsed
 
-def use_batches(path_in, path_out, compiled_searches, margin, db_pep, db_nuc):
+def use_batches(path_in, col, path_out, compiled_searches, margin, db_pep, db_nuc):
     print('\nRun Information','-'*(os.get_terminal_size()[0]-15))
-    query_list = pd.read_csv(path_in).squeeze().tolist()
+    query_list = np.loadtxt(path_in, delimiter=',', dtype=str)[col-1]
     query_list = query_list[0:] if '.' not in query_list[0] else query_list
     print(f'{len(query_list)} queries found in {path_in}')
     
@@ -422,7 +432,7 @@ def main(welcome, when):
         pass
     db_pep = 'protein'
     db_nuc= 'nuccore'
-    path_in, path_out, compiled_searches, margin, p1 = user_information(when)
+    path_in, col, path_out, compiled_searches, margin, p1 = user_information(when)
      
     use_batches(path_in, path_out, compiled_searches, margin, db_pep, db_nuc)
     

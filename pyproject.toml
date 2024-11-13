@@ -6,7 +6,6 @@ build-backend = "setuptools.build_meta"
 name = "MIE-2024"
 version = "2024.11.06"
 dependencies = [
-    "pandas >= 2.2.2",
     "requests >= 2.32.2",
     "biopython >= 1.84"
 ]
