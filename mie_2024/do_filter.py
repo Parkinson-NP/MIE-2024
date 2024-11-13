@@ -6,11 +6,12 @@ Created on Fri Sep 13 14:18:52 2024
 """
 
 #included with python 3.12
-import os, time, datetime, json, platform, csv
+import os, time, datetime, json, platform
 
 
 #via !pip install [name]
 import requests #2.32.2
+import numpy as np
 
 #via !pip install biopython 
 import Bio.Entrez as Entrez
@@ -59,7 +60,7 @@ def user_information(when):
     p1 = path_in.split('/')[-1].strip('.csv') + f'---{when}p1'
     col = int(user_input(name='col',
                      prompt='Protein Accession column number: ',
-                     gat_type='value'
+                     gate_type='value'
                      ).value_received) 
     #SAVE LOCATION
     save_preference = user_input(name='save_preference', 
@@ -72,7 +73,7 @@ def user_information(when):
                                    gate_type='value'
                                    ).value_received
     else:
-        path_out = f'{os.getcwd()}\\program_outputs\\program1_out\\{p1}'
+        path_out = f'{os.getcwd()}\\mie_2024_outputs\\filter\\{p1}'
      
     print('\nSearch Parameters', '-'*(os.get_terminal_size()[0]-18))
     #SEARCH REQUESTS
@@ -184,12 +185,7 @@ def fetch_CDS(acc_links, db_nuc):
                                rettype='fasta_cds_na', 
                                retmode='txt'
                                ).url, stream=True)
-    nucs = urllib.request.urlopen(efetch(db= db_nuc, 
-                               id= acc_links.keys(),
-                               idtype='acc', 
-                               rettype='fasta_cds_na', 
-                               retmode='txt'
-                               ).url)
+    
 
     records ={}
     accumulate_record = str()
@@ -419,7 +415,6 @@ def job_estimate(speeds, remaining, batch_size):
     return batch
 
 def main(welcome, when):
-    
     if input('Press (W) to see a welcome message, To continue, press any other key. ').lower() == 'w':
         print('-'*os.get_terminal_size()[0])
         print(welcome)
@@ -433,13 +428,15 @@ def main(welcome, when):
     db_pep = 'protein'
     db_nuc= 'nuccore'
     path_in, col, path_out, compiled_searches, margin, p1 = user_information(when)
-     
+    
     use_batches(path_in, path_out, compiled_searches, margin, db_pep, db_nuc)
     
     print('Results saved to: ', path_out)
-
+    
 if __name__ == "__main__":
-    main(welcome, when)
+     main(welcome, when)
+    
+
 
 
 

@@ -9,13 +9,13 @@ import sys, datetime, subprocess, platform, os
 from user_input import user_input
 when = str(datetime.datetime.now())[:17].replace(' ', '_').replace(':', '.')
 
-welcome = '''This program combs through results of program1 (or any other directory containing .fasta files) and automates product prediction by antiSMASH.
+welcome = '''This program combs through results of do_filter.py (or any other directory containing .fasta files) and automates product prediction by antiSMASH.
 Product prediction may take considerable time - antiSMASH will supply reporting on product prediction status automatically. Please take care when providing input and output folder paths.'''
 
 error_message = '''As a start to interpreting the auto-generated error message, some common issues include:
     - command line arguments entered out of order
     - improperly converted file paths for your operating system
-    - improperly written outputs of program 1
+    - improperly written nucleotide records
     - failure to set a conda environment with access to antiSMASH
     - issues with your antiSMASH installation.'''
 
@@ -62,7 +62,7 @@ def prepare(path_in, path_out):
     try:
         files = str(subprocess.check_output(['ls', path_in])).strip('b\'').split('\\n')[:-1]
         files = [f for f in files if '.fasta' in f]
-        print('Found', len(files), 'results from program1 to run.')
+        print('Found', len(files), 'results to run.')
     except Exception as error:
         close_out(error, 'Accessing .fasta outputs from you unix system or virtual machine via your 2nd argument.')
     

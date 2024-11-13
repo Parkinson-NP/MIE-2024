@@ -11,7 +11,7 @@ explanations = {'email': '''Accessing NCBI's E-Utilities through BioPython requi
                 'api_key' : '''Your API key should be a string of numbers and letters, available via your NCBI profile.''',
                 'path_in': '''A CSV file containing protein accessions in the NCBI protein database. If your header row contains the '.' character, it will be mistaken for an accession. Files with and without headers are supported. If your file path as pasted is not recognized, first ensure you are utilizing the correct slash notation for your operating system (/path/to/file vs \\path\\to\\file). If issues persist, try using double slashes to catch any accidental unicode interpretations (writing /path/to/file as //path//to//file).''',
                 'col' : '''Column number containing protein accessions in input csv.''',
-                'save_preference': f'You will need this save location for the next step, product prediction. By default, your outputs will be saved to {os.getcwd()}\\program1_out\\job_id.',
+                'save_preference': f'You will need this save location for the next step, product prediction. By default, your outputs will be saved to {os.getcwd()}\\mie_2024_outputs\\program\\job_id.',
                 'path_out' : '''You will need this save location for the next step, product prediction. If operating with a virtual machine, please ensure you will be able to access this path from your UNIX system.''', 
                 'keyword' : '''A word or word fragment to be found in the '/product' field of a CDS in a GenBanl feature table. Keywords are not case sensitive.''',
                 'needs_neighbor' : '''Adjacent products may be used to identify modular combinations, for example an NRPS accompanied by a PBP-like peptide cyclase, rather than an NRPS alone.''',
@@ -22,7 +22,8 @@ explanations = {'email': '''Accessing NCBI's E-Utilities through BioPython requi
                 'welcome' : 'Hello!',
                 'batch' : '''To offer more control over your experience, you may opt to release your queries in small batches. At the end of each batch, you will be offered a time estimate for remaining queries and the choice to continue batching or release all remaining queries.''',
                 'batch_size' : 'A positive integer, less than the length of your query list.',
-                'convert_path' : '''For users needing virtualization to use antiSMASH, files may prove difficult to navigate to given the differences in path conventions between operating systems. Selecting yes will attempt to programatically convert any Windows path to the corresponding mount. If programatic conversion repeatedly fails, opt out and manually convert your path.'''}
+                'convert_path' : '''For users needing virtualization to use antiSMASH, files may prove difficult to navigate to given the differences in path conventions between operating systems. Selecting yes will attempt to programatically convert any Windows path to the corresponding mount. If programatic conversion repeatedly fails, opt out and manually convert your path.''',
+                'smiles' : '''Optionally include product SMILES in the synthesis guide sheet.'''}
 
 class user_input:
     def __init__(self, name, prompt, gate_type):
@@ -33,39 +34,38 @@ class user_input:
         self.value_received = self.gate_loop()
    
     def echo_YIN(prompt, choice, echo): #echo, yes/no/info loop
-        try:
-            if echo == False: #only asking once
-                print(prompt)
-                print('\t (Y) to confirm | (I) for more info | (N) to decline')
-                user = input('\t Choice: ')
-                choice = re.sub(r'\W+', '', user).lower()[0]
-                     
-            if echo == True: 
-                if str(choice).lower() != 'i':
-                    if type(choice) == str:
-                        print('\t', 'You entered: ', choice)
-                                       
-                print('\t (Y) to confirm | (I) for more info | (N) to retype your answer')
-                
-                user = input('\t Choice: ')
-                choice = re.sub(r'\W+', '', user).lower()[0]
+        if echo == False: #only asking once
+            print(prompt)
+            print('\t (Y) to confirm | (I) for more info | (N) to decline')
+            user = input('\t Choice: ')
+            choice = re.sub(r'\W+', '', user).lower()[0]
+                    
+        if echo == True: 
+            if str(choice).lower() != 'i':
+                if type(choice) == str:
+                    print('\t', 'You entered: ', choice)
+                                    
+            print('\t (Y) to confirm | (I) for more info | (N) to retype your answer')
             
-            else:
-                choice = choice.lower() #otherwise do info
-              
-            if choice[0] == 'y':
-                return True
+            user = input('\t Choice: ')
+            choice = re.sub(r'\W+', '', user).lower()[0]
+        
+        else:
+            choice = choice.lower() #otherwise do info
             
-            if choice[0] == 'i':
-                return None
-            
-            if choice[0] == 'n':
-                return False
-            
-        except:
+        if choice[0] == 'y':
+            return True
+        
+        if choice[0] == 'i':
+            return None
+        
+        if choice[0] == 'n':
+            return False
+        
+        else:
             print('Unrecognized input or choice. Please rerun the program to assure accurate setup parameters.')
             sys.exit()
-                
+            
             
     def value_check(self, value):
         

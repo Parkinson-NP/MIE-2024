@@ -9,10 +9,14 @@ dependencies = [
     "requests >= 2.32.2",
     "biopython >= 1.84"
 ]
+
+
+
 requires-python = ">=3.9"
 authors = [
     {name = "E.B.", email = "ebrajkov@purdue.edu"}
 ]
+
 maintainers = [
     {name = "E.B.", email = "ebrajkov@purdue.edu"}
 ]

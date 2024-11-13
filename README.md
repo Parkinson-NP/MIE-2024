@@ -70,7 +70,7 @@ conda deactivate
 ```do_filter``` is OS independent; it can be called from any terminal with your Conda environment activated.
 ```bash
 conda activate MIE-2024
-python3 do_filter.py
+python3 MIE_2024.do_filter
 ```
 Once initiated, you will be prompted to view an optional welcome message before continuing to enter mandatory and optional parameters. This message can also be used to confirm you are working in the intended environment.
 
@@ -85,17 +85,17 @@ In contrast to ```do_filter``` and ```do_synthesis```, product prediction requir
 
 ```bash
 conda activate antiSMASH
-find /initial/path | grep "mie_2024/scripts"
+find /initial/path | grep "mie_2024"
 ```
 ```bash
-cd /full/path/returned/mie_2024/scripts
+cd /full/path/returned/mie_2024
 ```
 For WSL users, this means searching your mounted drive, 
 ```/mnt/c```. Extending this initial path with more specificity, for example ```/mnt/c/users/username/anaconda3/envs``` can help reduce extraneous results.
 
-With ```do_prediction``` now available in the antiSMASH environment, it can be treated identically to the OS-independent scripts. 
+With ```do_prediction``` now available in the antiSMASH environment, it can invoked similar to the OS-independent scripts. 
 ```bash
-python3 do_prediction.py
+python3 MIE_2024/do_prediction.py
 ```
 ```do_prediction``` relies only on the Python standard library, ensuring its dependencies are satisfied by those of antiSMASH. Other scripts may behave unexpectedly if run in the antiSMASH environment.
 
@@ -107,5 +107,5 @@ python3 do_prediction.py
 ```do_synthesis``` can be run identically to ```do_filtering``` in the installation Conda environment, where information is available through the welcome message and ```user_input.explanations```
 ```bash
 conda activate MIE-2024
-python3 do_synthesis.py
+python3 MIE_2024.do_synthesis
 ```
