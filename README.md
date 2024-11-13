@@ -34,7 +34,7 @@ pip install git+https://github.com/Parkinson-NP/MIE-2024
 ### Unix Compatible OS or Environment
 AntiSMASH 7.1 does not offer support for the Windows OS. There are many options available to configure a Unix compatible environment on Windows OS. Native Unix users may proceed to installation of antiSMASH local.
 
- As an example, setup of Windows Subsystem Linux (WSL) with Ubuntu is used here. For additional WSL tips and FAQs, official instructions are available at <https://learn.microsoft.com/en-us/windows/wsl/install>.
+ As an example, setup of Windows Subsystem Linux (WSL) is used here. For additional WSL tips and FAQs, official instructions are available at <https://learn.microsoft.com/en-us/windows/wsl/install>.
 
 [//]: # (Give WSL instructions in detail??)  
 [//]: # (Depending on your software version, you may need to enable WSL before moving forwards. WSL can be enabled via Administrator commands in Windows Powershell, or graphically in Windows Control Panel.)  
@@ -59,11 +59,11 @@ conda activate antismash
 download-antismash-databases
 conda deactivate
 ```
-*antiSMASH* denotes the environment name (customizable), while *antismash* indicates the necessary package to Bioconda. antiSMASH is not installed in the same environment as MIE-2024 to allow use of other antiSMASH integrations with possible dependency clashes.
-Bioconda is one of 3 supported installation methods from antiSMASH. Instructions for Docker or manual installation can be found at <https://docs.antismash.secondarymetabolites.org/install/>.
+*antiSMASH* denotes the environment name (customizable), while *antismash* indicates the necessary package to Bioconda. antiSMASH is not installed in the same environment as MIE-2024 to allow use of other antiSMASH integrations with possible dependency clashes. Alternative installation methods are detailed in the official antiSMASH guide: <https://docs.antismash.secondarymetabolites.org/#how-to-use-antismash-local-installation>
+
 # Use Instructions
 ## 1. Filtering BLAST-P Results
-```do_filter``` utilizes Entrez to programatically access NCBI protein records and link to their corresponding nucleotide record. Each nucleotide record is surveyed for products of interest supplied by the user, which in combination with other parameters excludes nucleotide records and regions not associated with desirable product features from further processing. Records with no hits are not discarded, instead saved as JSON files for any further analysis.
+```do_filter``` utilizes Entrez to programatically access NCBI protein records and link to their corresponding nucleotide record. Each nucleotide record is surveyed for products of interest supplied by the user, which in combination with other parameters excludes nucleotide records and regions not associated with desirable product features from further processing. Records with no hits are not discarded, instead saved as JSON files for potential future analysis.
 
 <img src="images/p1_11112024.svg" width=400>
 
@@ -97,11 +97,15 @@ With ```do_prediction``` now available in the antiSMASH environment, it can be t
 ```bash
 python3 do_prediction.py
 ```
-```do_prediction``` does not rely on Biopython or To avoid risking dependency clashes between these and any other antiSMASH integrations, please refrain from running  in the antiSMASH environment.
+```do_prediction``` relies only on the Python standard library, ensuring its dependencies are satisfied by those of antiSMASH. Other scripts may behave unexpectedly if run in the antiSMASH environment.
 
-## Program 3: Product Synthesis Guide
-Program 3 does:
-<img src="images/p3_11112024.svg" width=400>
+## 3. Product Synthesis Guide
+```do_synthesis``` is a short organizational script used to parse the collection of nested files produced by antiSMASH into a CSV. Results are indexed and organized as series of monomers, aligned with the sequential procedure of solid-phase peptide synthesis. Product SMILES may be added for further detail.
 
-Expect to do:
+<img src="images/p3_11122024.svg" width=400>
 
+```do_synthesis``` can be run identically to ```do_filtering``` in the installation Conda environment, where information is available through the welcome message and ```user_input.explanations```
+```bash
+conda activate MIE-2024
+python3 do_synthesis.py
+```
