@@ -5,8 +5,7 @@ Created on Tue Aug 13 23:06:04 2024
 @author: ellio
 """
 
-import os, json, datetime, sys, platform
-import pandas as pd
+import os, json, datetime, sys, platform, csv
 from user_input import user_input
 
 when = str(datetime.datetime.now())[:17].replace(' ', '_').replace(':', '.')
@@ -19,8 +18,8 @@ def user_information(when):
                          gate_type='value'
                          ).value_received
     
-    p2 = path_in.split('\\')[-1].split('.csv')[0]
-    p3 = f'{p2}---{when}p3'
+    p2 = path_in.split('\\')[-1].split('_._')[0]
+    p3 = f'{p2}_._{when}p3'
     
     #SAVE LOCATION
     save_preference = user_input(name='save_preference', 
@@ -77,19 +76,23 @@ def antismash_json_to_AA(filename, smiley):
     return products
 
 def save_results(path_in, path_out, p3, smiles):
-    
-    output = {}
+    output = [[]]
+    header = []
     for result in os.listdir(path_in):
         file=f'{path_in}\\{result}\\{result}.json'
         products = antismash_json_to_AA(file, smiles)
-        
-        #TODO: eliminate pandas dependency by writing longest product keys as header
-        sys.exit()
-    df = pd.DataFrame(output).T
-    df.to_csv(f'{path_out}\\{p3}.csv')
-    print('Result saved to: ', path_out)
     
-def main(when):
+        for p in products:
+            if len(p.keys()) > len(header):
+                header = p.keys() 
+                output[0] = header
+            output.append(p.values())
+
+    with open(f'{path_out}\\{p3}.csv', 'w', newline='') as sheet:
+        writer = csv.writer(sheet)
+        writer.writerows(output)
+    print("Results saved to: \\", path_out+'\\'+p3+'.csv')
+def main(welcome, when):
     if input('Press (W) to see a welcome message, To continue, press any other key. ').lower() == 'w':
         print('-'*os.get_terminal_size()[0])
         print(welcome)
@@ -100,4 +103,4 @@ def main(when):
     save_results(path_in, path_out, p3, smiles)
     
 if __name__ == "__main__":
-    main(when)
+    main(welcome, when)

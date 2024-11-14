@@ -56,8 +56,8 @@ def WL_conversion(path):
 
 def prepare(path_in, path_out):
     
-    p1 = path_in.split('/')[-1]
-    p2 = f'{p1}---{when}p2'
+    p1 = path_in.split('/')[-1].split('_._')[0]
+    p2 = f'{p1}_._{when}p2'
     
     try:
         files = str(subprocess.check_output(['ls', path_in])).strip('b\'').split('\\n')[:-1]

@@ -79,7 +79,7 @@ For any user input, you will have the opportunity to affirm your choice and/or s
 ## 2. Product Prediction with antiSMASH
 ```do_prediction``` utilizes antiSMASH to predict and annotate the nucleotide regions isolated in Filtering. ```do_prediction``` acts as a substitute for normal command line interface with antiSMASH, running many records consecutively with the same parameters.
 
-<img src="images/p2_11122024.svg" width =400>
+<img src="images/p2_11142024.svg" width =400>
 
 In contrast to ```do_filter``` and ```do_synthesis```, product prediction requires a Unix terminal with the antiSMASH environment activated. To access ```do_prediction``` from its installation in your initial environment, you will first need to identify and navigate to its directory. 
 

@@ -57,7 +57,7 @@ def user_information(when):
                             prompt='Full path to input file containing protein accessions, including .csv extension: ',
                             gate_type='value'
                             ).value_received
-    p1 = path_in.split('/')[-1].strip('.csv') + f'---{when}p1'
+    p1 = path_in.split('/')[-1].strip('.csv') + f'_._{when}p1'
     col = int(user_input(name='col',
                      prompt='Protein Accession column number: ',
                      gate_type='value'
@@ -74,7 +74,9 @@ def user_information(when):
                                    ).value_received
     else:
         path_out = f'{os.getcwd()}\\mie_2024_outputs\\filter\\{p1}'
-     
+        if not os.path.exists(path_out):
+            os.makedirs(path_out)
+
     print('\nSearch Parameters', '-'*(os.get_terminal_size()[0]-18))
     #SEARCH REQUESTS
     compiled_searches = []
@@ -203,7 +205,7 @@ def fetch_CDS(acc_links, db_nuc):
             n_accession = accumulate_record.split('>lcl|')[1
                                           ].split(' ')[0
                                           ].split('_cds')[0]                                         
-            linker = f'{n_accession}-nuccore_of-{acc_links[n_accession]}'
+            linker = f'{n_accession}_nuccore_of_{acc_links[n_accession]}'
             
             for cds in accumulate_record.split('>lcl|')[1:]:
                 info={} #qualifiers of a single CDS
