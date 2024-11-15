@@ -4,7 +4,7 @@ Created on Wed Oct 16 16:20:44 2024
 
 @author: ellio
 """
-import os, sys, re
+import os, sys, re, logging
 
 explanations = {'email': '''Accessing NCBI's E-Utilities through BioPython requires an email. This email is used by NCBI to track usage rates and enquire about excessive use. See "Accessing NCBI’s Entrez databases" > "Entrez Guidelines" available at https://biopython-tutorial.readthedocs.io/en/latest/ for details.''',
                 'api_use': '''Using an NCBI API key allows for an allowed query rate upgrade from 3/sec to 10/sec. API keys are available upon request free of charge, see https://support.nlm.nih.gov/knowledgebase/article/KA-05317/en-us for instructions.''',
@@ -25,6 +25,19 @@ explanations = {'email': '''Accessing NCBI's E-Utilities through BioPython requi
                 'convert_path' : '''For users needing virtualization to use antiSMASH, files may prove difficult to navigate to given the differences in path conventions between operating systems. Selecting yes will attempt to programatically convert any Windows path to the corresponding mount. If programatic conversion repeatedly fails, opt out and manually convert your path.''',
                 'smiles' : '''Optionally include product SMILES in the synthesis guide sheet.'''}
 
+def log_it(script_name, when):
+    cf = logging.Formatter('%(message)s')
+    ff = '%(asctime)s - %(name)s: %(message)s'
+    logging.basicConfig(filename=f'{script_name}_{when}.log', level=logging.INFO, format=ff)
+    logger = logging.getLogger(f'mie_2024.{script_name}')
+    logger.setLevel(logging.INFO)
+
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+    ch.setFormatter(cf)
+    logger.addHandler(ch)
+    return logger
+
 class user_input:
     def __init__(self, name, prompt, gate_type):
         self.prompt = prompt
@@ -32,7 +45,7 @@ class user_input:
         self.gate_type = gate_type
         self.name = name #email, api key, api choice, etc #TODO write all these out
         self.value_received = self.gate_loop()
-   
+    
     def echo_YIN(prompt, choice, echo): #echo, yes/no/info loop
         if echo == False: #only asking once
             print(prompt)

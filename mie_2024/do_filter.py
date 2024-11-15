@@ -8,8 +8,6 @@ Created on Fri Sep 13 14:18:52 2024
 #included with python 3.12
 import os, time, datetime, json, platform
 
-
-#via !pip install [name]
 import requests #2.32.2
 import numpy as np
 
@@ -17,7 +15,8 @@ import numpy as np
 import Bio.Entrez as Entrez
 from Bio.Entrez import esearch, elink, efetch
 
-from user_input import user_input
+import user_end
+from user_end import user_input
 
 when = str(datetime.datetime.now())[:17].replace(' ', '_').replace(':', '.')
 welcome ='''This program takes a list of NCBI protein accessions and uses NCBI's E-Utilities to find the corresponding nucleotide record.
@@ -29,6 +28,7 @@ The coding (CDS) regions of the record are then searched for your product(s) of 
 \toutputs: a .json file
 \twith all CDS regions labeled by product for later parsing.
 \nYou can stop the program at any time without losing files written so far, but remaining queries will not be saved.'''
+
 
 
 def user_information(when):     
@@ -417,15 +417,18 @@ def job_estimate(speeds, remaining, batch_size):
     return batch
 
 def main(welcome, when):
+    logger = user_end.log_it('filter', when)
     if input('Press (W) to see a welcome message, To continue, press any other key. ').lower() == 'w':
         print('-'*os.get_terminal_size()[0])
         print(welcome)
         print('Please ensure all system and environment information is as expected before continuing.')
-        print('\tOperating system: ', platform.system())
-        print('\tWorking directory: ', os.getcwd())
+        logger.info(f'\tOperating system: {platform.system()}')
+        logger.info(f'\tWorking directory: {os.getcwd()}')
         if 'CONDA_PREFIX' in os.environ.keys():
-            print('\tPython environment: ', os.environ['CONDA_PREFIX'])
+            env = os.environ['CONDA_PREFIX']
+            logger.info(f'\tPython environment: {env}')
     else:
+        logger.info('No Conda environment found.')
         pass
     db_pep = 'protein'
     db_nuc= 'nuccore'
@@ -433,7 +436,7 @@ def main(welcome, when):
     
     use_batches(path_in, path_out, compiled_searches, margin, db_pep, db_nuc)
     
-    print('Results saved to: ', path_out)
+    logger.info(f'Results saved to: {path_out}')
     
 if __name__ == "__main__":
      main(welcome, when)

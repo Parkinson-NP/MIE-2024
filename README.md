@@ -77,7 +77,7 @@ Once initiated, you will be prompted to view an optional welcome message before 
 For any user input, you will have the opportunity to affirm your choice and/or seek additional information about the parameter's requirements and usage. If at any point you supply an invalid input, you will be reprompted with additional detail. This information can also be called from the dictionary ```user_input.explanations``` on demand.
 
 ## 2. Product Prediction with antiSMASH
-```do_prediction``` utilizes antiSMASH to predict and annotate the nucleotide regions isolated in Filtering. ```do_prediction``` acts as a substitute for normal command line interface with antiSMASH, running many records consecutively with the same parameters.
+```do_prediction``` utilizes antiSMASH to predict and annotate the nucleotide regions isolated in ```do_filter```. ```do_prediction``` acts as a substitute for normal command line interface with antiSMASH, running many records consecutively with the same parameters.
 
 <img src="images/p2_11142024.svg" width =400>
 
