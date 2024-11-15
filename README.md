@@ -1,14 +1,14 @@
 # MIE-2024
 ## Automated filtering and product prediction for synthesis of NRPS/PKS natural products
 
-* some info about the piece, ex. accompanying paper and authors
-* beta version for the Parkinson Lab
+* Information about the piece, ex. accompanying paper and authors
+* Beta version for the Parkinson Lab
 
 ## Purpose
-Effectively comb blast-p results at bgc level before committing to product prediction; then automate product prediction and translation to synthesis sheet
+MIE-2024 serves as a simple yet effective interface to automate non-ribosomal peptide synthetase (NRPS) and polyketide synthase (PKS) product prediction and synthesis planning. Intended for integration with NCBI BLAST-P service, users can find, filter, and trim nucleotide records to identify possible products with desireable features. Genome annotation and product prediction is then carried out with antiSMASH, the results of which are transcribed into a synthesis friendly format.
 
 ## Required Third-Party Tools
-The package relies on antiSMASH (<https://docs.antismash.secondarymetabolites.org/>) for product prediction and Biopython (<https://biopython.org/>) to interface with the NCBI Entrez API.
+The package relies on [antiSMASH](https://docs.antismash.secondarymetabolites.org/) for product prediction and [Biopython](https://biopython.org/) to interface with the NCBI Entrez API. Major sub-dependencies include [Numpy](https://numpy.org/doc/) and [Requests](https://requests.readthedocs.io/en/latest/).
 
 ## Installation Components
 - Python virtual environment
@@ -17,7 +17,7 @@ The package relies on antiSMASH (<https://docs.antismash.secondarymetabolites.or
 
 ## Installation Guide
 Quick installation employs both Conda and Git. If you have not worked with these tools before, their documentation is linked below.
-> Conda: <https://docs.conda.io/projects/conda/en/latest/>
+> Conda: <https://docs.conda.io/projects/conda/en/latest/> \
 > Git: <https://git-scm.com/doc>
 
 ### Python Virtual Environment
@@ -59,7 +59,7 @@ conda activate antismash
 download-antismash-databases
 conda deactivate
 ```
-*antiSMASH* denotes the environment name (customizable), while *antismash* indicates the necessary package to Bioconda. antiSMASH is not installed in the same environment as MIE-2024 to allow use of other antiSMASH integrations with possible dependency clashes. Alternative installation methods are detailed in the official antiSMASH guide: <https://docs.antismash.secondarymetabolites.org/#how-to-use-antismash-local-installation>
+*antiSMASH* denotes the environment name (customizable), while *antismash* indicates the necessary package to Bioconda. antiSMASH is not installed in the same environment as MIE-2024 to allow use of other antiSMASH integrations with possible dependency clashes. Alternative installation methods are detailed in the [official antiSMASH guide](https://docs.antismash.secondarymetabolites.org/#how-to-use-antismash-local-installation)
 
 # Use Instructions
 ## 1. Filtering BLAST-P Results
@@ -109,3 +109,9 @@ python3 MIE_2024/do_prediction.py
 conda activate MIE-2024
 python3 MIE_2024.do_synthesis
 ```
+# License
+? which one ?
+# Support
+Console inputs and outputs are saved as .txt files in the subdirectory ```MIE_2024/logs```, searchable by their time of execution. Please utilize these logs in the event of unexpected program behavior to localize your issue to a particular script, dependency, or input case.
+
+For related works and contact information, please visit [our website](https://www.parkinsonlaboratory.com/).
