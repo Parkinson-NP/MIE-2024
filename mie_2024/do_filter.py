@@ -6,15 +6,14 @@ Created on Fri Sep 13 14:18:52 2024
 """
 
 #included with python 3.12
-import os, time, datetime, json, platform
-
+import os, time, datetime, json, platform, csv, sys
 import requests #2.32.2
-import numpy as np
 
-#via !pip install biopython 
+#via biopython 
 import Bio.Entrez as Entrez
 from Bio.Entrez import esearch, elink, efetch
 
+#mie_2024 file
 import user_end
 from user_end import user_input
 
@@ -27,9 +26,9 @@ The coding (CDS) regions of the record are then searched for your product(s) of 
 \nIf there are no hits for your product(s) of interest:
 \toutputs: a .json file
 \twith all CDS regions labeled by product for later parsing.
-\nYou can stop the program at any time without losing files written so far, but remaining queries will not be saved.'''
-
-
+\nYou can stop the program at any time without losing files written so far, but remaining queries will not be saved.
+\nType --help in any interactive field to view information on input requirements and usage.'''
+logger = user_end.log_it('filter', when, os.getcwd())
 
 def user_information(when):     
     print('\nUser Information', '-'*(os.get_terminal_size()[0]-17))
@@ -51,17 +50,19 @@ def user_information(when):
                              ).value_received
     else:
         Entrez.api_key = None
-        
+
     #QUERY FILE    
     path_in = user_input(name='path_in', 
                             prompt='Full path to input file containing protein accessions, including .csv extension: ',
                             gate_type='value'
-                            ).value_received
-    p1 = path_in.split('/')[-1].strip('.csv') + f'_._{when}p1'
+                            ).value_received.strip('"')
+    p1 = path_in.split('\\')[-1].strip('.csv') + f'_._{when}p1'
     col = int(user_input(name='col',
                      prompt='Protein Accession column number: ',
                      gate_type='value'
-                     ).value_received) 
+                     ).value_received)
+    query_list, file_name = read_input(path_in, col) 
+
     #SAVE LOCATION
     save_preference = user_input(name='save_preference', 
                                  prompt='Would you like to save outputs to a location other than the default folder? ', 
@@ -77,8 +78,8 @@ def user_information(when):
         if not os.path.exists(path_out):
             os.makedirs(path_out)
 
-    print('\nSearch Parameters', '-'*(os.get_terminal_size()[0]-18))
     #SEARCH REQUESTS
+    print('\nSearch Parameters', '-'*(os.get_terminal_size()[0]-18))
     compiled_searches = []
     more_searches = True
     while more_searches != False:
@@ -91,11 +92,18 @@ def user_information(when):
         
     #MARGIN
     margin = int(user_input(name='margin', 
-                       prompt='How many products would you like to include when trimming around matches for your product of interest? ',
-                       gate_type='value'
-                       ).value_received)
+                            prompt='How many products would you like to include when trimming around matches for your product of interest? ',
+                            gate_type='value'
+                            ).value_received)
     
-    return path_in, col, path_out, compiled_searches, margin, p1
+    return query_list, file_name, path_out, compiled_searches, margin, p1
+
+def read_input(path_in, col):
+    file_name = path_in.split('\\')[-1]
+    query_file = csv.reader(open(path_in, 'r'))
+    query_list = [row[col-1] for row in query_file]
+    query_list = query_list[1:] if '.' not in query_list[0] else query_list
+    return query_list, file_name
 
 def search_parameters():
     search_parameters = {}
@@ -105,11 +113,10 @@ def search_parameters():
                          ).value_received
     
     needs_neighbor = user_input(name='needs_neighbor', 
-                                  prompt='Requires adjacent product? ', 
-                                  gate_type='preference'
-                                  ).value_received
+                                prompt='Requires adjacent product? ', 
+                                gate_type='preference'
+                                ).value_received
    
-    
     if needs_neighbor == True:
         search_parameters['neighbor_separation'] = user_input(name='neighbor_separation',
                                                               prompt='Permissible separation of neighboring products: ',
@@ -229,7 +236,7 @@ def fetch_CDS(acc_links, db_nuc):
             
     return records, time.time()-start
 
-def product_search(record, compiled_searches, margin): 
+def product_search(linker, record, compiled_searches, margin): 
     start=time.time()
     
     all_proteins=[]
@@ -286,8 +293,9 @@ def product_search(record, compiled_searches, margin):
                 if search['keyword'] in protein:
                     catch_inds.append(loc)
                     
-    print(f'\tFound {len(catch_inds)} total products from {len(compiled_searches)} searches.')
-    
+    print(f'- {linker}: found {len(catch_inds)} total products from {len(compiled_searches)} searches.')
+    logger.debug(f'{len(catch_inds)} hits for {linker} at {catch_inds}')
+
     catch_inds=sorted(catch_inds)
     if len(catch_inds) > 0:
         window = (catch_inds[0]-margin, catch_inds[-1]+margin, len(catch_inds))
@@ -310,19 +318,20 @@ def save_clip(record, linker, searches, window, save_to):
             neighborhood += cds['seq'].replace('\n','')
             
         if len(neighborhood) < 1000:
-            print('\t\tChosen margins will trim this record too short for product prediction. Extending to length >= 1000.')
+            logger.debug(f'Extended window for {linker}')
+            print('\tChosen margin will trim this record too short for product prediction. Extending to length >= 1000.')
             n = window[1]
             while len(neighborhood) < 1000:
                 n = n+1
                 cds = record[n]
                 neighborhood += cds['seq'].replace('\n', '')
             header = f'>Partial from {linker} | CDS_{window[0]} - CDS_{window[1]} of {len(record[1])} (margin extended) | with 1 or more findings of {searches}\n'
-        with open(f'{linker}.fasta', 'w') as file:
+        with open(f'{save_to}\\{linker}.fasta', 'w') as file:
             file.write(header)
             file.write(neighborhood)
     
     else:
-        with open(f'{linker}.json', 'w') as file:
+        with open(f'{save_to}\\{linker}.json', 'w') as file:
             json.dump(record, file)
     return time.time()-start
 
@@ -331,7 +340,7 @@ def process_selection(selection, compiled_searches, margin, path_out, db_pep, db
         try:
             links, link_t = accession_link(selection, db_pep, db_nuc)
         except:
-            print(f'Encountered a web error, attempt {attempt+1}/3. Sleeping 5 seconds.')
+            logger.info(f'Encountered a web error, attempt {attempt+1}/3. Sleeping 5 seconds.')
             time.sleep(5)
             continue
         else:
@@ -341,17 +350,15 @@ def process_selection(selection, compiled_searches, margin, path_out, db_pep, db
     elapsed = link_t + record_t
     
     for linker, record in records.items():
-        window, window_t = product_search(record, compiled_searches, margin)
+        window, window_t = product_search(linker, record, compiled_searches, margin)
         clip_t = save_clip(record, linker, compiled_searches, window, path_out)
         elapsed += window_t
         elapsed += clip_t
     return elapsed
 
-def use_batches(path_in, col, path_out, compiled_searches, margin, db_pep, db_nuc):
-    print('\nRun Information','-'*(os.get_terminal_size()[0]-15))
-    query_list = np.loadtxt(path_in, delimiter=',', dtype=str)[col-1]
-    query_list = query_list[0:] if '.' not in query_list[0] else query_list
-    print(f'{len(query_list)} queries found in {path_in}')
+def use_batches(query_list, file_name, path_out, compiled_searches, margin, db_pep, db_nuc):
+    print('\nRun Information','-'*(os.get_terminal_size()[0]-16))
+    print(f'{len(query_list)} queries found in {file_name}')
     
     if len(query_list) > 5:
         print('Warning: Large Query Request')
@@ -379,35 +386,43 @@ def use_batches(path_in, col, path_out, compiled_searches, margin, db_pep, db_nu
     start = 0
     while run != 'stop':
         end = (b * batch_size) 
+        if run == False:
+            end = len(query_list)
+
         selection = query_list[start : end]
-        
+        print(f'\nRecords {start+1}-{end}')
         elapsed = process_selection(selection, compiled_searches, margin, path_out, db_pep, db_nuc)
-        remaining = remaining - batch_size
+        remaining = len(query_list) - end
         
-        start = end
-        b+=1
-        run = job_estimate(elapsed, remaining, batch_size)
+        if remaining > 0:
+            start = end
+            b+=1
+            run = job_estimate(elapsed, remaining, batch_size)
         
-    if remaining > 0:
+    if remaining in range(1, batch_size-1):
         print(f'Running remaining {remaining} queries.')
         selection = query_list[start : len(query_list)]
         process_selection(selection, compiled_searches, margin, path_out, db_pep, db_nuc)
-        print('Query list completed.')
+
+    if remaining == 0:
+            run = 'stop'
+
+    print('\nQuery list completed.')
     return remaining
 
 def job_estimate(speeds, remaining, batch_size):
-    print('Rate per entry: ', speeds/batch_size, ' seconds')
+    print('Rate per entry: ', round(speeds/batch_size, 5), ' seconds')
     estimate = speeds*remaining/batch_size
     if estimate >= 60:
-        estimate = str(estimate/60) + ' minutes'
+        estimate = str(estimate/60)[0:5] + ' minutes'
         if estimate > 3600:
-            estimate = str(estimate/3600) + ' hours'
+            estimate = str(estimate/3600)[0:5] + ' hours'
     else:
-        estimate = str(estimate) + ' seconds'
+        estimate = str(estimate)[0:5] + ' seconds'
         
     print('Estimated time remaining: ', estimate, f'for {remaining} queries.')
     
-    if remaining > batch_size:
+    if remaining >= batch_size:
         batch = user_input(name='batch',
                            prompt='Would you like to continue batching? ',
                            gate_type='preference'
@@ -417,7 +432,6 @@ def job_estimate(speeds, remaining, batch_size):
     return batch
 
 def main(welcome, when):
-    logger = user_end.log_it('filter', when)
     if input('Press (W) to see a welcome message, To continue, press any other key. ').lower() == 'w':
         print('-'*os.get_terminal_size()[0])
         print(welcome)
@@ -427,14 +441,24 @@ def main(welcome, when):
         if 'CONDA_PREFIX' in os.environ.keys():
             env = os.environ['CONDA_PREFIX']
             logger.info(f'\tPython environment: {env}')
+        else:
+            logger.info('No Conda environment found.')
     else:
-        logger.info('No Conda environment found.')
+        logger.debug(f'OS: {platform.system()}')
+        logger.debug(f'CWD: {os.getcwd()}')
+        logger.debug(f'ENV: {os.environ['CONDA_PREFIX'] if 'CONDA_PREFIX' in os.environ.keys() else None}')
         pass
     db_pep = 'protein'
     db_nuc= 'nuccore'
-    path_in, col, path_out, compiled_searches, margin, p1 = user_information(when)
-    
-    use_batches(path_in, path_out, compiled_searches, margin, db_pep, db_nuc)
+    query_list, file_name, path_out, compiled_searches, margin, p1 = user_information(when)
+
+    logger.debug(f'email: {Entrez.email}')
+    logger.debug(f'api key: {Entrez.api_key}')
+    logger.debug(f'queries: {query_list}')
+    logger.debug(f'searches: {compiled_searches}')
+    logger.debug(f'margin: {margin}')
+   
+    use_batches(query_list, file_name, path_out, compiled_searches, margin, db_pep, db_nuc)
     
     logger.info(f'Results saved to: {path_out}')
     

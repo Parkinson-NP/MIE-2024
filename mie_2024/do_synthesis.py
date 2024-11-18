@@ -4,14 +4,20 @@ Created on Tue Aug 13 23:06:04 2024
 
 @author: ellio
 """
+#included with python 3.12
+import os, json, datetime, platform, csv
 
-import os, json, datetime, sys, platform, csv
-from MIE_2024.interactives import user_input
+#mie_2024 file
+import user_end
+from user_end import user_input
 
 when = str(datetime.datetime.now())[:17].replace(' ', '_').replace(':', '.')
 welcome = '''This program is a short organizational script used to parse the collection of nested files produced by antiSMASH into a CSV.
 Results are indexed and organized as series of monomers, aligned with the sequential procedure of solid-phase peptide synthesis.
-Product SMILES may be added for further detail.'''
+Product SMILES may be added for further detail.
+Type --help in any interactive field to view information on input requirements and usage.'''
+logger = user_end.log_it('synthesis', when, os.getcwd())
+
 def user_information(when):
     path_in = user_input(name='path_in', 
                          prompt='Full path to antiSMASH output directory: ',
@@ -97,8 +103,19 @@ def main(welcome, when):
         print('-'*os.get_terminal_size()[0])
         print(welcome)
         print('Please ensure all system and environment information is as expected before continuing.')
-        print('\tOperating system: ', platform.system())
-        print('\tWorking directory: ', os.getcwd())
+        logger.info(f'\tOperating system: {platform.system()}')
+        logger.info(f'\tWorking directory: {os.getcwd()}')
+        if 'CONDA_PREFIX' in os.environ.keys():
+            env = os.environ['CONDA_PREFIX']
+            logger.info(f'\tPython environment: {env}')
+        else:
+            logger.info('No Conda environment found.')
+    else:
+        logger.debug(f'OS: {platform.system()}')
+        logger.debug(f'CWD: {os.getcwd()}')
+        logger.debug(f'ENV: {os.environ['CONDA_PREFIX'] if 'CONDA_PREFIX' in os.environ.keys() else None}')
+        pass
+    
     path_in, path_out, p3, smiles = user_information(when)
     save_results(path_in, path_out, p3, smiles)
     

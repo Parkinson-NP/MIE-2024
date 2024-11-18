@@ -74,7 +74,7 @@ python3 MIE_2024.do_filter
 ```
 Once initiated, you will be prompted to view an optional welcome message before continuing to enter mandatory and optional parameters. This message can also be used to confirm you are working in the intended environment.
 
-For any user input, you will have the opportunity to affirm your choice and/or seek additional information about the parameter's requirements and usage. If at any point you supply an invalid input, you will be reprompted with additional detail. This information can also be called from the dictionary ```user_input.explanations``` on demand.
+For any user input, you will have the opportunity to affirm your choice and/or seek additional information about the parameter's requirements and usage. If at any point you supply an invalid input, you will be reprompted with additional detail. This information can also be called from the dictionary ```user_end.explanations``` on demand by typing ```--help```.
 
 ## 2. Product Prediction with antiSMASH
 ```do_prediction``` utilizes antiSMASH to predict and annotate the nucleotide regions isolated in ```do_filter```. ```do_prediction``` acts as a substitute for normal command line interface with antiSMASH, running many records consecutively with the same parameters.
@@ -104,7 +104,7 @@ python3 MIE_2024/do_prediction.py
 
 <img src="images/p3_11122024.svg" width=400>
 
-```do_synthesis``` can be run identically to ```do_filtering``` in the installation Conda environment, where information is available through the welcome message and ```user_input.explanations```
+```do_synthesis``` can be run identically to ```do_filter``` in the installation Conda environment, where information is available through the welcome message and ```user_end.explanations``` by typing ```--help```.
 ```bash
 conda activate MIE-2024
 python3 MIE_2024.do_synthesis
@@ -112,6 +112,6 @@ python3 MIE_2024.do_synthesis
 # License
 ? which one ?
 # Support
-Console inputs and outputs are saved as .txt files in the subdirectory ```MIE_2024/logs```, searchable by their time of execution. Please utilize these logs in the event of unexpected program behavior to localize your issue to a particular script, dependency, or input case.
+Console information is saved as .log files in the subdirectory ```mie_2024_logs```, searchable by time of execution. Please utilize these logs in the event of unexpected program behavior to localize your issue to a particular script, dependency, or input case.
 
 For related works and contact information, please visit [our website](https://www.parkinsonlaboratory.com/).
