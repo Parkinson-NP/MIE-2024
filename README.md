@@ -110,7 +110,7 @@ conda activate MIE-2024
 python3 MIE_2024.do_synthesis
 ```
 # License
-? which one ?
+To be determined.
 # Support
 Console information is saved as .log files in the subdirectory ```mie_2024_logs```, searchable by time of execution. Please utilize these logs in the event of unexpected program behavior to localize your issue to a particular script, dependency, or input case.
 

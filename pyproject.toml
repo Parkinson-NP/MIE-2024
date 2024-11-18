@@ -10,8 +10,6 @@ dependencies = [
     "biopython >= 1.84"
 ]
 
-
-
 requires-python = ">=3.9"
 authors = [
     {name = "E.B.", email = "ebrajkov@purdue.edu"}
@@ -27,4 +25,3 @@ classifiers = []
 
 [project.urls]
 Repository = "https://github.com/Parkinson-NP/MIE-2024"
-#comment line
