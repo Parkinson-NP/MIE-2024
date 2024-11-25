@@ -78,7 +78,7 @@ def antismash_json_to_AA(filename, smiley):
                     p = p[1:-1].split(' - ')
                     polymer_formatted.extend(p)
                 for i, p in enumerate(polymer_formatted):
-                    polymer_dict[f'AA_{i+1}'] = p
+                    polymer_dict[f'M_{i+1}'] = p
                 
                 products.append(polymer_dict)
     return products
