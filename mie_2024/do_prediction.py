@@ -13,8 +13,9 @@ when = str(datetime.datetime.now())[:17].replace(' ', '_').replace(':', '.')
 welcome = '''This program combs through results of do_filter.py (or any other directory containing .fasta files) and automates product prediction by antiSMASH.
 Product prediction may take considerable time - antiSMASH will supply reporting on product prediction status automatically. Please take care when providing input and output folder paths.
 Type --help in any interactive field to view information on input requirements and usage.'''
-logger = user_end.log_it('prediction', when, os.getcwd())
-
+log_it = user_end.log_it('prediction', when, os.getcwd())
+logger = log_it[0]
+log_loc = log_it[1]
 error_message = '''As a start to interpreting the auto-generated error message, some common issues include:
     - command line arguments entered out of order
     - improperly converted file paths for your operating system
@@ -108,7 +109,7 @@ def main(welcome, when):
     path_in, path_out = user_info(when)
     files, p2 = prepare(path_in, path_out)
     run(files, path_in, path_out, p2)
-    
+    logger.info(f'Log saved to: {log_loc}')
 if __name__ == "__main__":
     main(welcome, when)
     

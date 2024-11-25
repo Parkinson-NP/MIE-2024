@@ -28,7 +28,9 @@ The coding (CDS) regions of the record are then searched for your product(s) of 
 \twith all CDS regions labeled by product for later parsing.
 \nYou can stop the program at any time without losing files written so far, but remaining queries will not be saved.
 \nType --help in any interactive field to view information on input requirements and usage.'''
-logger = user_end.log_it('filter', when, os.getcwd())
+log_it = user_end.log_it('filter', when, os.getcwd())
+logger = log_it[0]
+log_loc = log_it[1]
 
 def user_information(when):     
     print('\nUser Information', '-'*(os.get_terminal_size()[0]-17))
@@ -461,7 +463,7 @@ def main(welcome, when):
     use_batches(query_list, file_name, path_out, compiled_searches, margin, db_pep, db_nuc)
     
     logger.info(f'Results saved to: {path_out}')
-    
+    logger.info(f'Log saved to: {log_loc}')
 if __name__ == "__main__":
      main(welcome, when)
     

@@ -16,7 +16,9 @@ welcome = '''This program is a short organizational script used to parse the col
 Results are indexed and organized as series of monomers, aligned with the sequential procedure of solid-phase peptide synthesis.
 Product SMILES may be added for further detail.
 Type --help in any interactive field to view information on input requirements and usage.'''
-logger = user_end.log_it('synthesis', when, os.getcwd())
+log_it = user_end.log_it('synthesis', when, os.getcwd())
+logger = log_it[0]
+log_loc = log_it[1]
 
 def user_information(when):
     path_in = user_input(name='path_in', 
@@ -118,6 +120,7 @@ def main(welcome, when):
     
     path_in, path_out, p3, smiles = user_information(when)
     save_results(path_in, path_out, p3, smiles)
+    logger.info(f'Log saved to: {log_loc}')
     
 if __name__ == "__main__":
     main(welcome, when)
