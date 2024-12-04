@@ -1,6 +1,4 @@
 # MIE-2024
-## Automated filtering and product prediction for synthesis of NRPS/PKS natural products
-
 * Information about the piece, ex. accompanying paper and authors
 * Beta version for the Parkinson Lab
 
@@ -48,7 +46,7 @@ If choosing to install your distribution from the Microsoft Store, please ensure
  ```
 This terminal prompt indicates you are sucessfully operating in a Unix environment, where you will not have direct access to  your Windows files or installations. To continue with Quick Installation, you'll need to configure Anaconda or Miniconda for your new Unix environment. Miniconda will provide the necessary packages for the least storage space, and can be installed as instructed in *Quick command line install* for Linux: <https://docs.anaconda.com/miniconda/>.
 
-## AntiSMASH Local
+### AntiSMASH Local
 In a Unix terminal as a non-root user, the following commands will be adequate to configure Bioconda and install antiSMASH in a new Conda environment.
 ```Bash
 conda config --add channels bioconda
