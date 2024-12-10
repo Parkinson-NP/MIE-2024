@@ -5,8 +5,8 @@ Created on Mon Aug 19 13:44:16 2024
 @author: ellio
 """
 import datetime, os, sys, subprocess, platform
-from . import user_end
-from .user_end import user_input
+import user_end
+from user_end import user_input
 
 when = str(datetime.datetime.now())[:17].replace(' ', '_').replace(':', '.')
 
@@ -103,7 +103,8 @@ def main(welcome, when):
     else:
         logger.debug(f'OS: {platform.system()}')
         logger.debug(f'CWD: {os.getcwd()}')
-        logger.debug(f'ENV: {os.environ['CONDA_PREFIX'] if 'CONDA_PREFIX' in os.environ.keys() else None}')
+        envy = os.environ['CONDA_PREFIX'] if 'CONDA_PREFIX' in os.environ.keys() else None
+        logger.debug(f'ENV: {envy}')
         pass
     
     path_in, path_out = user_info(when)
