@@ -2,5 +2,5 @@ flowcharts/
 /TODO.txt
 mie_2024_logs/
 mie_2024_outputs/
-__pycache__/
+src/mie_2024/__pycache__/
 images/
