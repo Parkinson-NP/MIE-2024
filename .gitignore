@@ -1,4 +1,6 @@
 flowcharts/
 /TODO.txt
-/programs/testy.py
 mie_2024_logs/
+mie_2024_outputs/
+_pycache_/
+images/

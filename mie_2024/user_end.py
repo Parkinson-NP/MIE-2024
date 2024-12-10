@@ -40,14 +40,14 @@ def log_it(script_name, when, basedir):
     ch.setLevel(logging.INFO)
     ch.setFormatter(cf)
     logger.addHandler(ch)
-    return logger
+    return logger, save_file
 
 class user_input:
     def __init__(self, name, prompt, gate_type):
         self.prompt = prompt
         self.info = explanations[name]
         self.gate_type = gate_type
-        self.name = name #email, api key, api choice, etc #TODO write all these out
+        self.name = name 
         self.value_received = self.gate_loop()
     
     def echo_YIN(prompt, choice, echo): #echo, yes/no/info loop

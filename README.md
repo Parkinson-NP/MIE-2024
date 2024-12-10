@@ -5,10 +5,10 @@
 * Beta version for the Parkinson Lab
 
 ## Purpose
-MIE-2024 serves as a simple yet effective interface to automate non-ribosomal peptide synthetase (NRPS) and polyketide synthase (PKS) product prediction and synthesis planning. Intended for integration with NCBI BLAST-P service, users provide protein accessions to find, filter, and trim nucleotide records identified to encode possible products with desireable features. Genome annotation and product prediction is then carried out with antiSMASH, the results of which are transcribed into a synthesis friendly format.
+MIE-2024 serves as a simple yet effective interface to automate non-ribosomal peptide synthetase (NRPS) and polyketide synthase (PKS) product prediction and synthesis planning. Intended for integration with NCBI BLAST-P service, users provide protein accessions to find, filter, and trim nucleotide records identified to encode possible products with desirable features. Genome annotation and product prediction is then carried out with antiSMASH, the results of which are transcribed into a synthesis friendly format.
 
 ## Required Third-Party Tools
-The package relies on [antiSMASH](https://docs.antismash.secondarymetabolites.org/) for product prediction and [Biopython](https://biopython.org/) to interface with the NCBI Entrez API. Major sub-dependencies include [Numpy](https://numpy.org/doc/) and [Requests](https://requests.readthedocs.io/en/latest/).
+The package relies on [antiSMASH](https://docs.antismash.secondarymetabolites.org/) for product prediction and [Biopython](https://biopython.org/) to interface with the NCBI Entrez API.
 
 ## Installation Components
 - Python virtual environment
@@ -21,7 +21,7 @@ Quick installation employs both Conda and Git. If you have not worked with these
 > Git: <https://git-scm.com/doc>
 
 ### Python Virtual Environment
-We reccomend creating a Conda environment with Python 3.12, using the following lines in a Conda initialized terminal:
+We recommend creating a Conda environment with Python 3.12, using the following lines in a Conda initialized terminal:
 ```Bash
 conda create -n MIE-2024 python=3.12
 conda activate MIE-2024
@@ -32,7 +32,7 @@ pip install git+https://github.com/Parkinson-NP/MIE-2024
 ```
 
 ### Unix Compatible OS or Environment
-AntiSMASH 7.1 does not offer support for the Windows OS. There are many options available to configure a Unix compatible environment on Windows OS. Native Unix users may proceed to installation of antiSMASH local.
+AntiSMASH 7.1 does not offer support for Windows OS. There are many options available to configure a Unix compatible environment on Windows OS. Native Unix users may proceed to installation of antiSMASH local.
 
  As an example, setup of Windows Subsystem Linux (WSL) is used here. For additional WSL tips and FAQs, official instructions are available at <https://learn.microsoft.com/en-us/windows/wsl/install>.
 
@@ -65,7 +65,7 @@ conda deactivate
 ## 1. Filtering BLAST-P Results
 ```do_filter``` utilizes Entrez to programatically access NCBI protein records and link to their corresponding nucleotide record. Each nucleotide record is surveyed for products of interest supplied by the user, which in combination with other parameters excludes nucleotide records and regions not associated with desirable product features from further processing. Records with no hits are not discarded, instead saved as JSON files for potential future analysis.
 
-<img src="images/p1_11112024.svg" width=400>
+<img src="images/filter_overview.svg" width=400>
 
 ```do_filter``` is OS independent; it can be called from any terminal with your Conda environment activated.
 ```bash
@@ -79,7 +79,7 @@ For any user input, you will have the opportunity to affirm your choice and/or s
 ## 2. Product Prediction with antiSMASH
 ```do_prediction``` utilizes antiSMASH to predict and annotate the nucleotide regions isolated in ```do_filter```. ```do_prediction``` acts as a substitute for normal command line interface with antiSMASH, running many records consecutively with the same parameters.
 
-<img src="images/p2_11142024.svg" width =400>
+<img src="images/prediction_overview.svg" width =400>
 
 In contrast to ```do_filter``` and ```do_synthesis```, product prediction requires a Unix terminal with the antiSMASH environment activated. To access ```do_prediction``` from its installation in your initial environment, you will first need to identify and navigate to its directory. 
 
@@ -102,7 +102,7 @@ python3 MIE_2024/do_prediction.py
 ## 3. Product Synthesis Guide
 ```do_synthesis``` is a short organizational script used to parse the collection of nested files produced by antiSMASH into a CSV. Results are indexed and organized as series of monomers, aligned with the sequential procedure of solid-phase peptide synthesis. Product SMILES may be added for further detail.
 
-<img src="images/p3_11122024.svg" width=400>
+<img src="images/synthesis_overview.svg" width=400>
 
 ```do_synthesis``` can be run identically to ```do_filter``` in the installation Conda environment, where information is available through the welcome message and ```user_end.explanations``` by typing ```--help```.
 ```bash
