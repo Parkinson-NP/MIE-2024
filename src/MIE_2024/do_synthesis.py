@@ -8,8 +8,8 @@ Created on Tue Aug 13 23:06:04 2024
 import os, json, datetime, platform, csv
 
 #mie_2024 file
-import user_end
-from user_end import user_input
+import src.MIE_2024.user_end as user_end
+from src.MIE_2024.user_end import user_input
 
 when = str(datetime.datetime.now())[:17].replace(' ', '_').replace(':', '.')
 welcome = '''This program is a short organizational script used to parse the collection of nested files produced by antiSMASH into a CSV.
