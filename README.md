@@ -83,10 +83,10 @@ In contrast to ```do_filter``` and ```do_synthesis```, product prediction requir
 
 ```bash
 conda activate antiSMASH
-find /initial/path | grep "mie_2024"
+find /initial/path | grep "MIE_2024"
 ```
 ```bash
-cd /full/path/returned/mie_2024
+cd /full/path/returned/MIE_2024
 ```
 For WSL users, this means searching your mounted drive, 
 ```/mnt/c```. Extending this initial path with more specificity, for example ```/mnt/c/users/username/anaconda3/envs``` can help reduce extraneous results.
