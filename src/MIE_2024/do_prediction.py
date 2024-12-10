@@ -5,8 +5,8 @@ Created on Mon Aug 19 13:44:16 2024
 @author: ellio
 """
 import datetime, os, sys, subprocess, platform
-import src.MIE_2024.user_end as user_end
-from src.MIE_2024.user_end import user_input
+from . import user_end
+from .user_end import user_input
 
 when = str(datetime.datetime.now())[:17].replace(' ', '_').replace(':', '.')
 
