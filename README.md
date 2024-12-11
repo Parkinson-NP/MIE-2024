@@ -28,7 +28,7 @@ With this environment activated, all non-antiSMASH dependencies can be installed
 ```Bash
 pip install git+https://github.com/Parkinson-NP/MIE-2024
 ```
-
+Environments are created and populated with pip/Conda commands only once, then activated for later uses. If you have successfully activated your environment, your command prompt should begin with ```(environment_name)```. If you run into trouble with environment management, you can view your environments with ```conda env list``` and delete environments with ```conda env remove -n environment_name```.
 ### Unix Compatible OS or Environment
 AntiSMASH 7.1 does not offer support for Windows OS. There are many options available to configure a Unix compatible environment on Windows OS. Native Unix users may proceed to installation of antiSMASH local.
 
@@ -47,19 +47,19 @@ If choosing to install your distribution from the Microsoft Store, please ensure
 This terminal prompt indicates you are sucessfully operating in a Unix environment, where you will not have direct access to  your Windows files or installations. To continue with Quick Installation, you'll need to configure Anaconda or Miniconda for your new Unix environment. Miniconda will provide the necessary packages for the least storage space, and can be installed as instructed in *Quick command line install* for Linux: <https://docs.anaconda.com/miniconda/>.
 
 ### AntiSMASH Local
-In a Linux terminal as a non-root user, the following commands will be adequate to configure Bioconda and install antiSMASH in a new Conda environment.
+In a Unix terminal as a non-root user, the following commands will be adequate to configure Bioconda and install antiSMASH in a new Conda environment.
 ```Bash
 conda config --add channels bioconda
 conda config --add channels conda-forge 
 conda config --set channel_priority strict
-conda create -n antiSMASH antismash
+conda create --platform "linux-64" -n antiSMASH antismash
 conda activate antiSMASH
 ```
 ```
 download-antismash-databases
 conda deactivate
 ```
-*antiSMASH* denotes the environment name (customizable), while *antismash* indicates the necessary package to Bioconda. antiSMASH is not installed in the same environment as MIE-2024 to allow use of other antiSMASH integrations with possible dependency clashes. Alternative installation methods are detailed in the [official antiSMASH guide](https://docs.antismash.secondarymetabolites.org/#how-to-use-antismash-local-installation), which may be required if working with MacOS.
+*antiSMASH* denotes the environment name (customizable), while *antismash* indicates the necessary package to Bioconda. antiSMASH is not installed in the same environment as MIE-2024 to allow use of other antiSMASH integrations with possible dependency clashes. Alternative installation methods are detailed in the [official antiSMASH guide](https://docs.antismash.secondarymetabolites.org/#how-to-use-antismash-local-installation).
 
 # Use Instructions
 ## 1. Filtering BLAST-P Results
