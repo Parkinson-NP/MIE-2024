@@ -53,9 +53,9 @@ conda config --add channels bioconda
 conda config --add channels conda-forge 
 conda config --set channel_priority strict
 conda create --platform "linux-64" -n antiSMASH antismash
+```
+```
 conda activate antiSMASH
-```
-```
 download-antismash-databases
 conda deactivate
 ```
