@@ -6,7 +6,8 @@ Created on Wed Oct 16 16:20:44 2024
 """
 import os, sys, re, logging, pprint
 
-explanations = {'email': '''Accessing NCBI's E-Utilities through BioPython requires an email. This email is used by NCBI to track usage rates and enquire about excessive use. See "Accessing NCBI’s Entrez databases" > "Entrez Guidelines" available at https://biopython-tutorial.readthedocs.io/en/latest/ for details.''',
+explanations = {'--exit': 'At any input point, use --exit to halt the program. No additional outputs will be given, including save locations. Lost information may be recovered from the associated .log file created for your run.',
+                'email': '''Accessing NCBI's E-Utilities through BioPython requires an email. This email is used by NCBI to track usage rates and enquire about excessive use. See "Accessing NCBI’s Entrez databases" > "Entrez Guidelines" available at https://biopython-tutorial.readthedocs.io/en/latest/ for details.''',
                 'api_use': '''Using an NCBI API key allows for an allowed query rate upgrade from 3/sec to 10/sec. API keys are available upon request free of charge, see https://support.nlm.nih.gov/knowledgebase/article/KA-05317/en-us for instructions.''',
                 'api_key' : '''Your API key should be a string of numbers and letters, available via your NCBI profile.''',
                 'path_in': '''A CSV file containing protein accessions in the NCBI protein database. If your header row contains the '.' character, it will be mistaken for an accession. Files with and without headers are supported. If your file path as pasted is not recognized, first ensure you are utilizing the correct slash notation for your operating system (/path/to/file vs \\path\\to\\file). If issues persist, try using double slashes to catch any accidental unicode interpretations (writing /path/to/file as //path//to//file).''',
@@ -76,7 +77,10 @@ class user_input:
 
         if '--help' in choice:
             pprint.pprint(explanations, width=os.get_terminal_size()[0])
-                   
+
+        if choice == '--exit':
+            sys.exit()
+
         if choice[0] == 'y':
             return True
         
