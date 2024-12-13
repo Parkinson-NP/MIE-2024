@@ -32,7 +32,7 @@ log_it = user_end.log_it('filter', when, os.getcwd())
 logger = log_it[0]
 log_loc = log_it[1]
 
-fsep = '/' if os.platform() == 'linux-64' else '\\'
+fsep = '/' if platform.system() == 'linux-64' else '\\'
 
 def user_information(when):     
     print('\nUser Information', '-'*(os.get_terminal_size()[0]-17))
