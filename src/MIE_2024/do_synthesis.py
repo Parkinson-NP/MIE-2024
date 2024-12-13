@@ -20,13 +20,15 @@ log_it = user_end.log_it('synthesis', when, os.getcwd())
 logger = log_it[0]
 log_loc = log_it[1]
 
+fsep = '/' if os.platform() == 'linux-64' else '\\'
+
 def user_information(when):
     path_in = user_input(name='path_in', 
                          prompt='Full path to antiSMASH output directory: ',
                          gate_type='value'
                          ).value_received
     
-    p2 = path_in.split('\\')[-1].split('_._')[0]
+    p2 = path_in.split(fsep)[-1].split('_._')[0]
     p3 = f'{p2}_._{when}p3'
     
     #SAVE LOCATION
@@ -40,7 +42,7 @@ def user_information(when):
                                    gate_type='value'
                                    ).value_received + '.csv'
     else:
-        path_out = f'{os.getcwd()}\\mie_2024_outputs\\synthesis'
+        path_out = f'{os.getcwd()}{fsep}mie_2024_outputs{fsep}synthesis'
         if not os.path.exists(path_out):
             os.makedirs(path_out)
 
@@ -53,7 +55,7 @@ def user_information(when):
  
 def antismash_json_to_AA(filename, smiley):
     products=[]
-    nucleotide_source = filename.split('.p2\\')[1].split('\\')[0]
+    nucleotide_source = filename.split(f'.p2{fsep}')[1].split(fsep)[0]
     
     with open(filename, 'r') as input_file:
         antismash_json = json.load(input_file)
@@ -87,7 +89,7 @@ def save_results(path_in, path_out, p3, smiles):
     output = [[]]
     header = []
     for result in os.listdir(path_in):
-        file=f'{path_in}\\{result}\\{result}.json'
+        file=f'{path_in}{fsep}{result}{fsep}{result}.json'
         products = antismash_json_to_AA(file, smiles)
     
         for p in products:
@@ -96,10 +98,10 @@ def save_results(path_in, path_out, p3, smiles):
                 output[0] = header
             output.append(p.values())
 
-    with open(f'{path_out}\\{p3}.csv', 'w', newline='') as sheet:
+    with open(f'{path_out}{fsep}{p3}.csv', 'w', newline='') as sheet:
         writer = csv.writer(sheet)
         writer.writerows(output)
-    print("Results saved to: \\", path_out+'\\'+p3+'.csv')
+    print(f"Results saved to: {fsep}", path_out+fsep+p3+'.csv')
 def main(welcome, when):
     if input('Press (W) to see a welcome message, To continue, press any other key. ').lower() == 'w':
         print('-'*os.get_terminal_size()[0])

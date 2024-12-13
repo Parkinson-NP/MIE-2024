@@ -32,6 +32,8 @@ log_it = user_end.log_it('filter', when, os.getcwd())
 logger = log_it[0]
 log_loc = log_it[1]
 
+fsep = '/' if os.platform() == 'linux-64' else '\\'
+
 def user_information(when):     
     print('\nUser Information', '-'*(os.get_terminal_size()[0]-17))
     #EMAIL
@@ -58,7 +60,7 @@ def user_information(when):
                             prompt='Full path to input file containing protein accessions, including .csv extension: ',
                             gate_type='value'
                             ).value_received.strip('"')
-    p1 = path_in.split('\\')[-1].strip('.csv') + f'_._{when}p1'
+    p1 = path_in.split(fsep)[-1].strip('.csv') + f'_._{when}p1'
     col = int(user_input(name='col',
                      prompt='Protein Accession column number: ',
                      gate_type='value'
@@ -76,7 +78,7 @@ def user_information(when):
                                    gate_type='value'
                                    ).value_received
     else:
-        path_out = f'{os.getcwd()}\\mie_2024_outputs\\filter\\{p1}'
+        path_out = f'{os.getcwd()}{fsep}mie_2024_outputs{fsep}filter{fsep}{p1}'
         if not os.path.exists(path_out):
             os.makedirs(path_out)
 
@@ -101,7 +103,7 @@ def user_information(when):
     return query_list, file_name, path_out, compiled_searches, margin, p1
 
 def read_input(path_in, col):
-    file_name = path_in.split('\\')[-1]
+    file_name = path_in.split(fsep)[-1]
     with open(path_in) as file:
         query_file = csv.reader(file)
         query_list=[]
@@ -336,12 +338,12 @@ def save_clip(record, linker, searches, window, save_to):
                 cds = record[n]
                 neighborhood += cds['seq'].replace('\n', '')
             header = f'>Partial from {linker} | CDS_{window[0]} - CDS_{window[1]} of {len(record[1])} (margin extended) | with 1 or more findings of {searches}\n'
-        with open(f'{save_to}\\{linker}.fasta', 'w') as file:
+        with open(f'{save_to}{fsep}{linker}.fasta', 'w') as file:
             file.write(header)
             file.write(neighborhood)
     
     else:
-        with open(f'{save_to}\\{linker}.json', 'w') as file:
+        with open(f'{save_to}{fsep}{linker}.json', 'w') as file:
             json.dump(record, file)
     return time.time()-start
 
