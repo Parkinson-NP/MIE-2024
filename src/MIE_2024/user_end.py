@@ -80,6 +80,7 @@ class user_input:
             pprint.pprint(explanations, width=os.get_terminal_size()[0])
 
         if choice == '--exit':
+            print(f"Voluntary exit completed.")
             sys.exit()
 
         if choice[0] == 'y':
@@ -99,6 +100,10 @@ class user_input:
     def value_check(self, value):
         if '--help' in value:
             pprint.pprint(explanations, width=os.get_terminal_size()[0])
+
+        if value == '--exit':
+            print(f"Voluntary exit completed.")
+            sys.exit()
 
         gate = False
         if self.name == 'email':
