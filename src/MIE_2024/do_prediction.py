@@ -84,8 +84,8 @@ def run(files, path_in, path_out,  p2):
         outgo = path_out + '/' + p2 + '/' + file.strip('.fasta')
         logger.info('\nRunning antiSMASH for', file)
         subprocess.call(['antismash', income,
-                        '--genefinding-tool', 'prodigal',
-                        '--output-dir', outgo])
+                        '--output-dir', outgo,
+                         '--genefinding-tool', 'prodigal',])
     print('\nProduct prediction completed.')
     
 def main(welcome, when):
