@@ -95,7 +95,7 @@ For WSL users, this means searching your mounted drive,
 
 With ```do_prediction``` now available in the antiSMASH environment, it can invoked similar to the OS-independent scripts. 
 ```bash
-python3 MIE_2024/do_prediction.py
+python3 do_prediction.py
 ```
 ```do_prediction``` relies only on the Python standard library, ensuring its dependencies are satisfied by those of antiSMASH. Other scripts may behave unexpectedly if run in the antiSMASH environment.
 
