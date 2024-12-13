@@ -5,7 +5,8 @@ Created on Wed Oct 16 16:20:44 2024
 @author: ellio
 """
 import os, sys, re, logging, pprint, platform
-fsep = '/' if platform.system() == 'linux-64' else '\\'
+fsep = '/' if platform.system() == 'Linux' else '\\'
+
 explanations = {'--exit': 'At any input point, use --exit to halt the program. No additional outputs will be given, including save locations. Lost information may be recovered from the associated .log file created for your run.',
                 'email': '''Accessing NCBI's E-Utilities through BioPython requires an email. This email is used by NCBI to track usage rates and enquire about excessive use. See "Accessing NCBI’s Entrez databases" > "Entrez Guidelines" available at https://biopython-tutorial.readthedocs.io/en/latest/ for details.''',
                 'api_use': '''Using an NCBI API key allows for an allowed query rate upgrade from 3/sec to 10/sec. API keys are available upon request free of charge, see https://support.nlm.nih.gov/knowledgebase/article/KA-05317/en-us for instructions.''',
