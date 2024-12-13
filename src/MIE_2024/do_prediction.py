@@ -8,7 +8,7 @@ import datetime, os, sys, subprocess, platform
 import user_end
 from user_end import user_input
 
-when = str(datetime.datetime.now())[:17].replace(' ', '_').replace(':', '.')
+when = str(datetime.datetime.now())[:16].replace(' ', '_').replace(':', '.')
 
 welcome = '''This program combs through results of do_filter.py (or any other directory containing .fasta files) and automates product prediction by antiSMASH.
 Product prediction may take considerable time - antiSMASH will supply reporting on product prediction status automatically. Please take care when providing input and output folder paths.

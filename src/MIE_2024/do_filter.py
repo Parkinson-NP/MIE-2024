@@ -17,7 +17,7 @@ from Bio.Entrez import esearch, elink, efetch
 from . import user_end
 from .user_end import user_input
 
-when = str(datetime.datetime.now())[:17].replace(' ', '_').replace(':', '.')
+when = str(datetime.datetime.now())[:16].replace(' ', '_').replace(':', '.')
 welcome ='''This program takes a list of NCBI protein accessions and uses NCBI's E-Utilities to find the corresponding nucleotide record.
 The coding (CDS) regions of the record are then searched for your product(s) of interest.
 \nIf your 1 or more of your product(s) of interest is found:
