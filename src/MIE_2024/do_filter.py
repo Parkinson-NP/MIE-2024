@@ -402,7 +402,7 @@ def use_batches(query_list, file_name, path_out, compiled_searches, margin, db_p
             end = len(query_list)
 
         selection = query_list[start : end]
-        print(f'\nRecords {start+1}-{end}')
+        print(f'\nFetching records {start+1}-{end}')
         elapsed = process_selection(selection, compiled_searches, margin, path_out, db_pep, db_nuc)
         remaining = len(query_list) - end
         
