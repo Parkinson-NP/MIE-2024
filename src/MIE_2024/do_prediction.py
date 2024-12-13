@@ -4,7 +4,7 @@ Created on Mon Aug 19 13:44:16 2024
 
 @author: ellio
 """
-import datetime, os, sys, subprocess, platform
+import datetime, os, sys, subprocess, platform, json, csv
 import user_end
 from user_end import user_input
 
@@ -68,7 +68,7 @@ def WL_conversion(path):
 def prepare(path_in, path_out):
     
     p1 = path_in.split('/')[-1].split('_._')[0]
-    p2 = f'{p1}_._{when}p2'
+    p2 = f'{p1}_._{when}.p2'
     
     try:
         files = str(subprocess.check_output(['ls', path_in])).strip('b\'').split('\\n')[:-1]
@@ -84,7 +84,21 @@ def prepare(path_in, path_out):
     logger.info(f'New folder created: {path_out}/{p2}\n')
     return files, p2
 
+def check_pred(outgo):
+    name=outgo.split('/')[-1]
+    file=f'{outgo}/{name}.json'
+    with open(file, 'r') as input_file:
+        antismash_json = json.load(input_file)
+    record = antismash_json['records'][0]
+  
+    if len(record['areas']) < 1:
+        logger.info(f'\tNo predictions made for {name}.')
+        redo = name.split('nuccore_of_')[-1].strip('.json')
+
+    return redo
+
 def run(files, path_in, path_out,  p2):
+    redo=[]
     for file in files:
         income = path_in + '/' + file
         outgo = path_out + '/' + p2 + '/' + file.strip('.fasta')
@@ -92,8 +106,18 @@ def run(files, path_in, path_out,  p2):
         subprocess.call(['antismash', income,
                         '--output-dir', outgo,
                          '--genefinding-tool', 'prodigal',])
+        do=check_pred(outgo)
+        if len(do)>0:
+            redo.append([do])
+  
+    if len(redo) > 0:
+        oops = path_out + '/' + p2 + '/' + 'redo_filter'
+        with open(f'{oops}.csv', 'w', newline='') as sheet:
+            writer = csv.writer(sheet)
+            writer.writerows(redo)
+        logger.info(f'Some predictions appear to have failed.  Your records may be incomplete or contain a contig that interferes with antiSMASH prediction capabilities. Protein accessions of all failed predictions can be found in {oops}.csv')
     print('\nProduct prediction completed.')
-    
+
 def main(welcome, when):
     if input('Press (W) to see a welcome message, To continue, press any other key. ').lower() == 'w':
         print('-'*os.get_terminal_size()[0])

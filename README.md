@@ -1,6 +1,7 @@
 # MIE-2024
 * Information about the piece, ex. accompanying paper and authors
 * Beta version for the Parkinson Lab
+* Info to be added: case sensitivity of searches, how to manually check files/setup, what to expect to see, antismash success check.
 
 ## Purpose
 MIE-2024 serves as a simple yet effective interface to automate non-ribosomal peptide synthetase (NRPS) and polyketide synthase (PKS) product prediction and synthesis planning. Intended for integration with NCBI BLAST-P service, users provide protein accessions to find, filter, and trim nucleotide records identified to encode possible products with desirable features. Genome annotation and product prediction is then carried out with antiSMASH, the results of which are transcribed into a synthesis friendly format.

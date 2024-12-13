@@ -26,10 +26,10 @@ def user_information(when):
     path_in = user_input(name='path_in', 
                          prompt='Full path to antiSMASH output directory: ',
                          gate_type='value'
-                         ).value_received
+                         ).value_received.strip("\"")
     
     p2 = path_in.split(fsep)[-1].split('_._')[0]
-    p3 = f'{p2}_._{when}p3'
+    p3 = f'{p2}_._{when}.p3'
     
     #SAVE LOCATION
     save_preference = user_input(name='save_preference', 
@@ -40,7 +40,7 @@ def user_information(when):
         path_out = user_input(name='path_out', 
                                    prompt='Full path to your desired save folder: ', 
                                    gate_type='value'
-                                   ).value_received + '.csv'
+                                   ).value_received.strip("\"") + '.csv'
     else:
         path_out = f'{os.getcwd()}{fsep}mie_2024_outputs{fsep}synthesis'
         if not os.path.exists(path_out):
@@ -89,19 +89,20 @@ def save_results(path_in, path_out, p3, smiles):
     output = [[]]
     header = []
     for result in os.listdir(path_in):
-        file=f'{path_in}{fsep}{result}{fsep}{result}.json'
-        products = antismash_json_to_AA(file, smiles)
-    
-        for p in products:
-            if len(p.keys()) > len(header):
-                header = p.keys() 
-                output[0] = header
-            output.append(p.values())
+        if 'redo_filter' not in result:
+            file=f'{path_in}{fsep}{result}{fsep}{result}.json'
+            products = antismash_json_to_AA(file, smiles)
+        
+            for p in products:
+                if len(p.keys()) > len(header):
+                    header = p.keys() 
+                    output[0] = header
+                output.append(p.values())
 
-    with open(f'{path_out}{fsep}{p3}.csv', 'w', newline='') as sheet:
-        writer = csv.writer(sheet)
-        writer.writerows(output)
-    print(f"Results saved to: {fsep}", path_out+fsep+p3+'.csv')
+        with open(f'{path_out}{fsep}{p3}.csv', 'w', newline='') as sheet:
+            writer = csv.writer(sheet)
+            writer.writerows(output)
+
 def main(welcome, when):
     if input('Press (W) to see a welcome message, To continue, press any other key. ').lower() == 'w':
         print('-'*os.get_terminal_size()[0])
@@ -122,6 +123,7 @@ def main(welcome, when):
     
     path_in, path_out, p3, smiles = user_information(when)
     save_results(path_in, path_out, p3, smiles)
+    logger.info(f"Results saved to: {fsep}", path_out+fsep+p3+'.csv')
     logger.info(f'Log saved to: {log_loc}')
     
 if __name__ == "__main__":
