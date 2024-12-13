@@ -12,7 +12,7 @@ when = str(datetime.datetime.now())[:17].replace(' ', '_').replace(':', '.')
 
 welcome = '''This program combs through results of do_filter.py (or any other directory containing .fasta files) and automates product prediction by antiSMASH.
 Product prediction may take considerable time - antiSMASH will supply reporting on product prediction status automatically. Please take care when providing input and output folder paths.
-Type --help in any interactive field to view information on input requirements and usage.'''
+Type --help in any interactive field to view information on input requirements and usage, or --end to terminate the program.'''
 log_it = user_end.log_it('prediction', when, os.getcwd())
 logger = log_it[0]
 log_loc = log_it[1]

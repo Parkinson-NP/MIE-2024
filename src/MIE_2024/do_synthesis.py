@@ -15,7 +15,7 @@ when = str(datetime.datetime.now())[:17].replace(' ', '_').replace(':', '.')
 welcome = '''This program is a short organizational script used to parse the collection of nested files produced by antiSMASH into a CSV.
 Results are indexed and organized as series of monomers, aligned with the sequential procedure of solid-phase peptide synthesis.
 Product SMILES may be added for further detail.
-Type --help in any interactive field to view information on input requirements and usage.'''
+Type --help in any interactive field to view information on input requirements and usage, or --end to terminate the program.'''
 log_it = user_end.log_it('synthesis', when, os.getcwd())
 logger = log_it[0]
 log_loc = log_it[1]

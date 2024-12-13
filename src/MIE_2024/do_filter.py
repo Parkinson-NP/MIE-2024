@@ -27,7 +27,7 @@ The coding (CDS) regions of the record are then searched for your product(s) of 
 \toutputs: a .json file
 \twith all CDS regions labeled by product for later parsing.
 \nYou can stop the program at any time without losing files written so far, but remaining queries will not be saved.
-\nType --help in any interactive field to view information on input requirements and usage.'''
+\nType --help in any interactive field to view information on input requirements and usage, or --end to terminate the program.'''
 log_it = user_end.log_it('filter', when, os.getcwd())
 logger = log_it[0]
 log_loc = log_it[1]
