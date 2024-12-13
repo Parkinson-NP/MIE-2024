@@ -117,8 +117,10 @@ class user_input:
         if self.name == 'email':
             error_message = 'Invalid email address given. Please include a domain, such as @org.edu'
             gate = '@' in value and '.' in value
-        if self.name in ['path_in', 'path_out']:
+        if self.name == 'path_out':
             error_message = 'File/path not found. Please check the location of your file/path and try again.'
+            if not os.path.exists(value.strip('"')):
+                os.makedirs(value.strip('"'))
             gate = os.path.exists(value.strip('"'))
         if self.name == 'neighbor_separation' or self.name == 'margin':
             error_message = 'Please enter an integer with optional directionality; (+n, -n, or n) for n separating products.'

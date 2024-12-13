@@ -39,20 +39,26 @@ def user_info(when):
                               ).value_received
     logger.debug(f'Path conversion: {convert_path}')
 
-    path_in = input('Full path to folder containing .fasta files: ')
+    path_in = user_input(name='path_in', 
+                            prompt='Full path to folder containing .fasta files: ',
+                            gate_type='value'
+                            ).value_received.strip('"')
+    
     if convert_path == True:
         path_in = WL_conversion(path_in)
-    if os.path.exists(path_in) == False:
-        print('File/path not found. Please check the location of your file/path and try again.')
-        sys.exit()
     
     #PATH OUT
-    path_out = input('Full output path: ')
+    path_out = user_input(name='path_out', 
+                                   prompt='Full path to your desired save folder: ', 
+                                   gate_type='value'
+                                   ).value_received.strip("\"")
+    
+    if not os.path.exists(path_out):
+            os.makedirs(path_out)
+
     if convert_path == True:
         path_out = WL_conversion(path_out)
-    if os.path.exists(path_out) == False:
-        print('File/path not found. Please check the location of your file/path and try again.')
-        sys.exit()
+
     return path_in, path_out
 
 def WL_conversion(path):
@@ -82,7 +88,7 @@ def run(files, path_in, path_out,  p2):
     for file in files:
         income = path_in + '/' + file
         outgo = path_out + '/' + p2 + '/' + file.strip('.fasta')
-        logger.info('\nRunning antiSMASH for', file)
+        logger.info(f'Running antiSMASH for {file.strip(".fasta")}')
         subprocess.call(['antismash', income,
                         '--output-dir', outgo,
                          '--genefinding-tool', 'prodigal',])
