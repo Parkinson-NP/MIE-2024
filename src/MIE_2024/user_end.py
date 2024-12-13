@@ -27,9 +27,9 @@ explanations = {'--exit': 'At any input point, use --exit to halt the program. N
                 'smiles' : '''Optionally include product SMILES in the synthesis guide sheet.'''}
 
 def log_it(script_name, when, basedir):
-    save_file = f'{basedir}//mie_2024_logs//{script_name}//{script_name}_{when}.log'
-    if not os.path.exists(f'{basedir}//mie_2024_logs//{script_name}'):
-        os.makedirs(f'{basedir}//mie_2024_logs//{script_name}')
+    save_file = f'{basedir}{fsep}mie_2024_logs{fsep}{script_name}{fsep}{script_name}_{when}.log'
+    if not os.path.exists(f'{basedir}{fsep}mie_2024_logs{fsep}{script_name}'):
+        os.makedirs(f'{basedir}{fsep}mie_2024_logs{fsep}{script_name}')
 
     cf = logging.Formatter('%(message)s')
     ff = '%(asctime)s - %(name)s: %(message)s'
