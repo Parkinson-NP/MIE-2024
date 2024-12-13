@@ -4,15 +4,15 @@ Created on Wed Oct 16 16:20:44 2024
 
 @author: ellio
 """
-import os, sys, re, logging, pprint
-
+import os, sys, re, logging, pprint, platform
+fsep = '/' if platform.system() == 'linux-64' else '\\'
 explanations = {'--exit': 'At any input point, use --exit to halt the program. No additional outputs will be given, including save locations. Lost information may be recovered from the associated .log file created for your run.',
                 'email': '''Accessing NCBI's E-Utilities through BioPython requires an email. This email is used by NCBI to track usage rates and enquire about excessive use. See "Accessing NCBI’s Entrez databases" > "Entrez Guidelines" available at https://biopython-tutorial.readthedocs.io/en/latest/ for details.''',
                 'api_use': '''Using an NCBI API key allows for an allowed query rate upgrade from 3/sec to 10/sec. API keys are available upon request free of charge, see https://support.nlm.nih.gov/knowledgebase/article/KA-05317/en-us for instructions.''',
                 'api_key' : '''Your API key should be a string of numbers and letters, available via your NCBI profile.''',
-                'path_in': '''A CSV file containing protein accessions in the NCBI protein database. If your header row contains the '.' character, it will be mistaken for an accession. Files with and without headers are supported. If your file path as pasted is not recognized, first ensure you are utilizing the correct slash notation for your operating system (/path/to/file vs \\path\\to\\file). If issues persist, try using double slashes to catch any accidental unicode interpretations (writing /path/to/file as //path//to//file).''',
+                'path_in': f'''A CSV file containing protein accessions in the NCBI protein database. If your header row contains the '.' character, it will be mistaken for an accession. Files with and without headers are supported. If your file path as pasted is not recognized, first ensure you are utilizing the correct slash notation for your operating system (/path/to/file vs {fsep}path{fsep}to{fsep}file). If issues persist, try using double slashes to catch any accidental unicode interpretations (writing /path/to/file as //path//to//file).''',
                 'col' : '''Column number containing protein accessions in input csv.''',
-                'save_preference': f'You will need this save location for the next step, product prediction. By default, your outputs will be saved to {os.getcwd()}\\mie_2024_outputs\\script\\job_id.',
+                'save_preference': f'You will need this save location for the next step, product prediction. By default, your outputs will be saved to {os.getcwd()}{fsep}mie_2024_outputs{fsep}script{fsep}job_id.',
                 'path_out' : '''You will need this save location for the next step, product prediction. If operating with a virtual machine, please ensure you will be able to access this path from your UNIX system.''', 
                 'keyword' : '''A word or word fragment to be found in the '/product' field of a CDS in a GenBanl feature table. Keywords are not case sensitive.''',
                 'needs_neighbor' : '''Adjacent products may be used to identify modular combinations, for example an NRPS accompanied by a PBP-like peptide cyclase, rather than an NRPS alone.''',
