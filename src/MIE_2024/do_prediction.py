@@ -116,6 +116,7 @@ def main(welcome, when):
     path_in, path_out = user_info(when)
     files, p2 = prepare(path_in, path_out)
     run(files, path_in, path_out, p2)
+    logger.info(f'Results saved to: {path_out}/{p2}')
     logger.info(f'Log saved to: {log_loc}')
 if __name__ == "__main__":
     main(welcome, when)
