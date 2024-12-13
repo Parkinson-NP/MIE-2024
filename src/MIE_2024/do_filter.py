@@ -102,8 +102,16 @@ def user_information(when):
 
 def read_input(path_in, col):
     file_name = path_in.split('\\')[-1]
-    query_file = csv.reader(open(path_in, 'r'))
-    query_list = [row[col-1] for row in query_file]
+    with open(path_in) as file:
+        query_file = csv.reader(file)
+        query_list=[]
+        for row in query_file:
+            if len(row) > 0:
+                query_list.append(row[col-1])
+        for r, row in enumerate(query_list):
+            if len(row) != len(query_list[r-1]):
+                del query_list[r]
+        logger.info(f'Accession column contents found: {query_list[0:5]} ...')
     query_list = query_list[1:] if '.' not in query_list[0] else query_list
     return query_list, file_name
 
@@ -267,7 +275,7 @@ def product_search(linker, record, compiled_searches, margin):
                     direction = i 
             
             #for neighbors with unspecified separation
-            if neighbor_separation == '00':
+            if search['neighbor_separation'] == '00':
                for loc, protein in enumerate(all_proteins):
                    if search['keyword'] in protein:
                        catch_inds.append(loc)
@@ -415,7 +423,7 @@ def use_batches(query_list, file_name, path_out, compiled_searches, margin, db_p
 def job_estimate(speeds, remaining, batch_size):
     print('Rate per entry: ', round(speeds/batch_size, 5), ' seconds')
     estimate = speeds*remaining/batch_size
-    if estimate >= 60:
+    if estimate in range(60, 3600):
         estimate = str(estimate/60)[0:5] + ' minutes'
         if estimate > 3600:
             estimate = str(estimate/3600)[0:5] + ' hours'
