@@ -86,7 +86,6 @@ class user_input:
                 
             if type(user) == str:
                 choice = re.sub(r'\W+', '', user).lower()[0]
-                print(choice)
 
         else:
             choice = choice.lower() #otherwise do info
