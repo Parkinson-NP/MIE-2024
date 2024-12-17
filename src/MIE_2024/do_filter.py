@@ -76,7 +76,7 @@ def user_information(when):
         path_out = user_input(name='path_out', 
                                    prompt='Full path to your desired save folder: ', 
                                    gate_type='value'
-                                   ).value_received
+                                   ).value_received.strip('"')
     else:
         path_out = f'{os.getcwd()}{fsep}mie_2024_outputs{fsep}filter{fsep}{p1}'
         if not os.path.exists(path_out):
