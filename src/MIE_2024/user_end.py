@@ -121,6 +121,9 @@ class user_input:
             if not os.path.exists(value.strip('"')):
                 os.makedirs(value.strip('"'))
             gate = os.path.exists(value.strip('"'))
+        if self.name == 'path_in':
+            error_message = 'File/path not found. Please check the location of your file/path and try again.'
+            gate = os.path.exists(value.strip('"'))
         if self.name == 'neighbor_separation' or self.name == 'margin':
             error_message = 'Please enter an integer with optional directionality; (+n, -n, or n) for n separating products.'
             gate = any(p.isnumeric() for p in value)
@@ -139,7 +142,7 @@ class user_input:
             
         else:
             gate = user_input.echo_YIN(self.prompt, value, echo = True)
-        
+            
         if gate == None:
             print(self.info)
         
