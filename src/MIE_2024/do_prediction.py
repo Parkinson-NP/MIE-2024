@@ -111,7 +111,7 @@ def run(files, path_in, path_out,  p2):
             redo.append([do])
   
     if len(redo) > 0:
-        oops = path_out + '/' + p2 + '/' + 'redo_filter'
+        oops = path_out + '/' + p2 + '/' + 'redo_prediction'
         with open(f'{oops}.csv', 'w', newline='') as sheet:
             writer = csv.writer(sheet)
             writer.writerows(redo)

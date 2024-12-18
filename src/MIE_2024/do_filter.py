@@ -155,7 +155,7 @@ def accession_link(queries, db_pep, db_nuc):
                         retmode = 'txt'
                         ).read(
                         ).split('//\n\n')[:-1]
-    
+
     for p_record in b_proteins:
         #accomodate mixed accession functionality: Entrez vs. DBSOURCE
         #records without GI numbers cannot be Entrez linked (no esearch/elink)
@@ -163,29 +163,40 @@ def accession_link(queries, db_pep, db_nuc):
         p_accession = p_record.split('\nSOURCE')[0
                                      ].split('VERSION')[1
                                      ].split('\n')[0
-                                     ].split()[0]
-                                                   
+                                     ].split()[0]    
+                                              
         if 'RefSeq.' in p_record: #RefSeq. indicates GI number usage
-            s = json.load(esearch(db = 'protein',
-                                  term = p_record.split('KEYWORDS')[0
-                                         ].split('VERSION')[-1].strip(),
-                                  usehistory='y',
-                                  rettype='uilist',
-                                  retmode='json')
-                                  )['esearchresult']
-            
-            l = json.load(elink(dbfrom = 'protein',
-                                db = 'nuccore',
-                                linkname = 'protein_nuccore',
-                                id = s['idlist'][0],
-                                usehistory='y', 
-                                webenv=s['webenv'], 
-                                querykey=s['querykey'],
-                                retmode='json', 
-                                idtype='acc'))
-        
-            nuc_accession = l['linksets'][0]['linksetdbs'][0]['links'][0]
+            try:
+                s = json.load(esearch(db = 'protein',
+                                    term = p_record.split('KEYWORDS')[0
+                                            ].split('VERSION')[-1].strip(),
+                                    usehistory='y',
+                                    rettype='uilist',
+                                    retmode='json'),
+                                    strict=False
+                                    )['esearchresult']
+                
+                l = json.load(elink(dbfrom = 'protein',
+                                    db = 'nuccore',
+                                    linkname = 'protein_nuccore',
+                                    id = s['idlist'][0],
+                                    usehistory='y', 
+                                    webenv=s['webenv'], 
+                                    querykey=s['querykey'],
+                                    retmode='json', 
+                                    idtype='acc'),
+                                    strict=False)
+                
+            except Exception as error:
+                l={'linksets':[], 'ERROR':error}
+
             #nucleotide record of GI indexed protein found by search/link
+            if len(l['linksets']) < 1:
+                seeme = l['ERROR']
+                nuc_accession = f'{p_accession}_error'
+                logger.debug(f'{p_accession}: {seeme}')
+            else:
+                nuc_accession = l['linksets'][0]['linksetdbs'][0]['links'][0]
         else:
             nuc_accession = p_record.split('KEYWORDS')[0
                                    ].split('DBSOURCE')[1
@@ -194,7 +205,6 @@ def accession_link(queries, db_pep, db_nuc):
                                           
         acc_links[f'{nuc_accession}'] = p_accession
         #GI and non-GI indexed proteins treated identically in linking dict
-       
     return acc_links, time.time()-start
 
 def fetch_CDS(acc_links, db_nuc):
@@ -348,30 +358,36 @@ def save_clip(record, linker, searches, window, save_to):
     return time.time()-start
 
 def process_selection(selection, compiled_searches, margin, path_out, db_pep, db_nuc):
-    for attempt in range(3):
-        try:
-            links, link_t = accession_link(selection, db_pep, db_nuc)
-        except:
-            logger.info(f'Encountered a web error, attempt {attempt+1}/3. Sleeping 5 seconds.')
-            time.sleep(5)
-            continue
+    redo=[]
+    links, link_t = accession_link(selection, db_pep, db_nuc)
+    cleaned={}
+    for l in links.keys():
+        if 'error' in l:
+            redo.append(links[l])
+            logger.info(f'- Linking failed for {links[l]}. Saved to redo.')
         else:
-            break
-        
-    records, record_t = fetch_CDS(links, db_nuc)
-    elapsed = link_t + record_t
-    
-    for linker, record in records.items():
-        window, window_t = product_search(linker, record, compiled_searches, margin)
-        clip_t = save_clip(record, linker, compiled_searches, window, path_out)
-        elapsed += window_t
-        elapsed += clip_t
-    return elapsed
+            cleaned[l] = links[l]
+
+    if type(cleaned) == dict and len(cleaned.keys()) > 0:
+        records, record_t = fetch_CDS(cleaned, db_nuc)
+        elapsed = link_t + record_t
+        for linker, record in records.items():
+            window, window_t = product_search(linker, record, compiled_searches, margin)
+            clip_t = save_clip(record, linker, compiled_searches, window, path_out)
+            elapsed += window_t
+            elapsed += clip_t
+    else:
+        logger.info(f'Linking failed for full batch: {selection}. See {log_loc} for more info.')
+        elapsed = 0
+        redo = selection
+
+    return elapsed, redo
 
 def use_batches(query_list, file_name, path_out, compiled_searches, margin, db_pep, db_nuc):
     print('\nRun Information','-'*(os.get_terminal_size()[0]-16))
     print(f'{len(query_list)} queries found in {file_name}')
-    
+    do=[]
+
     if len(query_list) > 5:
         print('Warning: Large Query Request')
         batch = user_input(name='batch',
@@ -403,24 +419,37 @@ def use_batches(query_list, file_name, path_out, compiled_searches, margin, db_p
 
         selection = query_list[start : end]
         print(f'\nFetching records {start+1}-{end}')
-        elapsed = process_selection(selection, compiled_searches, margin, path_out, db_pep, db_nuc)
+        elapsed, redo = process_selection(selection, compiled_searches, margin, path_out, db_pep, db_nuc)
+        if len(redo) > 0:
+            do.append(redo)
         remaining = len(query_list) - end
         
         if remaining > 0:
             start = end
             b+=1
             run = job_estimate(elapsed, remaining, batch_size)
-        
+        else:
+            run = 'stop'
+
     if remaining in range(1, batch_size-1):
         print(f'Running remaining {remaining} queries.')
         selection = query_list[start : len(query_list)]
-        process_selection(selection, compiled_searches, margin, path_out, db_pep, db_nuc)
-
-    if remaining == 0:
-            run = 'stop'
-
+        elapsed, redo = process_selection(selection, compiled_searches, margin, path_out, db_pep, db_nuc)
+        if len(redo) > 0:
+            do.extend(redo)
+    else:
+        run = 'stop'
     print('\nQuery list completed.')
-    return remaining
+    return do
+
+def failures(redo_list, path_out):
+    if len(redo_list) > 0:
+        oops = path_out + fsep + 'redo_filter'
+        with open(f'{oops}.csv', 'w', newline='') as sheet:
+            writer = csv.writer(sheet)
+            for batch in redo_list:
+                writer.writerows([batch])
+        logger.info(f'Internet connectivity and server side issues with NCBI can cause record fetching and linking to fail. Accessions of failed queries have been saved in {oops}.csv. For error details, please see {log_loc}.')
 
 def job_estimate(speeds, remaining, batch_size):
     print('Rate per entry: ', round(speeds/batch_size, 5), ' seconds')
@@ -470,8 +499,9 @@ def main(welcome, when):
     logger.debug(f'searches: {compiled_searches}')
     logger.debug(f'margin: {margin}')
    
-    use_batches(query_list, file_name, path_out, compiled_searches, margin, db_pep, db_nuc)
-    
+    redo = use_batches(query_list, file_name, path_out, compiled_searches, margin, db_pep, db_nuc)
+    failures(redo, path_out)
+
     logger.info(f'Results saved to: {path_out}')
     logger.info(f'Log saved to: {log_loc}')
 if __name__ == "__main__":
