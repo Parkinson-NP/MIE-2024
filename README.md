@@ -77,6 +77,8 @@ Your system may replace ```python3``` with ```python``` or ```py```. Once initia
 
 For any user input, you will have the opportunity to affirm your choice and/or seek additional information about the parameter's requirements and usage. If at any point you supply an invalid input, you will be reprompted with additional detail. This information can also be called from the dictionary ```user_end.explanations``` on demand by typing ```--help```. Similarly, ```--end``` can be used to terminate the program at a decision point.
 
+In the event of a server side error, failed queries will be displayed before successes. All failed queries are saved in a new .CSV file at the conclusion of the program to be rerun. Usually, this does not indicate an issue with your inputs - rerunning the same queries results in varied failures due to connectivity and server response issues.
+
 ## 2. Product Prediction with antiSMASH
 ```do_prediction``` utilizes antiSMASH to predict and annotate the nucleotide regions isolated in ```do_filter```. ```do_prediction``` acts as a substitute for normal command line interface with antiSMASH, running many records consecutively with the same parameters.
 
@@ -99,6 +101,8 @@ With ```do_prediction``` now available in the antiSMASH environment, it can invo
 python3 do_prediction.py
 ```
 ```do_prediction``` relies only on the Python standard library, ensuring its dependencies are satisfied by those of antiSMASH. Other scripts may behave unexpectedly if run in the antiSMASH environment.
+
+While ```do_filter``` aims to trim sequences broadly enough to avoid the appearance of a contig in antiSMASH, tightly trimmed records may hinder the functionality of antiSMASH. Records which appear to have no predicted biosynthetic gene clusters (and resultingly, no predicted products) are marked in the terminal and a .CSV to be redone.
 
 ## 3. Product Synthesis Guide
 ```do_synthesis``` is a short organizational script used to parse the collection of nested files produced by antiSMASH into a CSV. Results are indexed and organized as series of monomers, aligned with the sequential procedure of solid-phase peptide synthesis. Product SMILES may be added for further detail.
