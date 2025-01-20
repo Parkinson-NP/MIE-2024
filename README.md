@@ -72,6 +72,8 @@ Your system may replace ```python3``` with ```python``` or ```py```. At the begi
 
 For any input, you will have the opportunity to affirm and/or seek additional information about the parameter's requirements and usage. If at any point you supply an invalid input, you will be prompted again with additional detail. This information can also be called on demand by typing ```--help```. Similarly, ```--end``` can be used to terminate the program at any input or decision point.
 
+In the event of a server side error, failed queries will be displayed before successes. All failed queries are saved in a new .CSV file at the conclusion of the program to be rerun. Usually, this does not indicate an issue with your inputs - rerunning the same queries results in varied failures due to connectivity and server response issues.
+
 ## Secondary Metabolite Prediction
 ```do_prediction``` utilizes antiSMASH to predict and annotate nucleotide regions isolated by ```do_filter```. Primarily serving as a wrapper for normal command line activity with antiSMASH, ```do_prediction``` runs many records consecutively with the same parameters while checking for prediction success. If a nucleotide region is too small or has been improperly trimmed, antiSMASH is unable to provide metabolite prediction and the record accession will be returned in an additional CSV to be rerun.
 
@@ -93,8 +95,9 @@ With ```do_prediction``` now available in the antiSMASH environment, it can be i
 ```bash
 python3 do_prediction.py
 ```
+```do_prediction``` relies only on the Python standard library, ensuring its dependencies are satisfied by those of antiSMASH. Other scripts may behave unexpectedly if run in the antiSMASH environment.
 
-```do_prediction``` relies only on the Python standard library, ensuring its dependencies are satisfied by those provided for antiSMASH. Other scripts may behave unexpectedly if run in the antiSMASH environment.
+While ```do_filter``` aims to trim sequences broadly enough to avoid the appearance of a contig in antiSMASH, tightly trimmed records may hinder the functionality of antiSMASH. Records which appear to have no predicted biosynthetic gene clusters (and resultingly, no predicted products) are marked in the terminal and a .CSV to be redone.
 
 ## Product Synthesis Guide
 ```do_synthesis``` is a short organizational script used to parse the collection of nested files produced by antiSMASH into a CSV. Results are indexed and organized as series of monomers, aligned with the sequential procedure of solid-phase peptide synthesis. For simplicity, only top monomer prediction abbreviations are included in the final sheet. Detailed prediction information can currently be found in the original antiSMASH JSON files and may be made available in CSV form in a later release.
