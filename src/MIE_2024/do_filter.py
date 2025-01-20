@@ -200,7 +200,13 @@ def accession_link(queries): #link full genome nucleotide records from protein a
                 nuc_accession = f'{p_accession}_error'
                 logger.debug(f'{p_accession}: {seeme}')
             else:
-                nuc_accession = l['linksets'][0]['linksetdbs'][0]['links'][0]
+                try:
+                    nuc_accession = l['linksets'][0]['linksetdbs'][0]['links'][0]
+                except Exception as error:
+                    l={'linksets':[], 'ERROR':error}
+                    seeme = l['ERROR']
+                nuc_accession = f'{p_accession}_error'
+                logger.debug(f'{p_accession}: {seeme}')
         else:
             nuc_accession = p_record.split('KEYWORDS')[0
                                    ].split('DBSOURCE')[1
