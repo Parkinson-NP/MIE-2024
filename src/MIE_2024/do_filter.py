@@ -28,13 +28,14 @@ The coding (CDS) regions of the record are then searched for your product(s) of 
 \twith all CDS regions labeled by product for later parsing.
 \nYou can stop the program at any time without losing files written so far, but remaining queries will not be saved.
 \nType --help in any interactive field to view information on input requirements and usage, or --end to terminate the program.'''
+
+#initialize log file and file separation for OS
 log_it = user_end.log_it('filter', when, os.getcwd())
 logger = log_it[0]
 log_loc = log_it[1]
-
 fsep = '/' if platform.system() == 'Linux' else '\\'
 
-def user_information(when):     
+def user_information(when): #collect all parameters as user_end.user_input instances
     print('\nUser Information', '-'*(os.get_terminal_size()[0]-17))
     #EMAIL
     Entrez.email = user_input(name= 'email', 
@@ -60,11 +61,14 @@ def user_information(when):
                             prompt='Full path to input file containing protein accessions, including .csv extension: ',
                             gate_type='value'
                             ).value_received.strip('"')
-    p1 = path_in.split(fsep)[-1].strip('.csv') + f'_._{when}p1'
+    
+    p1 = path_in.split(fsep)[-1].strip('.csv') + f'_._{when}p1' #runtime and program specific file name
+
     col = int(user_input(name='col',
                      prompt='Protein Accession column number: ',
                      gate_type='value'
                      ).value_received)
+    
     query_list, file_name = read_input(path_in, col) 
 
     #SAVE LOCATION
@@ -102,7 +106,7 @@ def user_information(when):
     
     return query_list, file_name, path_out, compiled_searches, margin, p1
 
-def read_input(path_in, col):
+def read_input(path_in, col): #custom CSV reader, designed for NCBI BLAST-P results
     file_name = path_in.split(fsep)[-1]
     with open(path_in) as file:
         query_file = csv.reader(file)
@@ -117,7 +121,7 @@ def read_input(path_in, col):
     query_list = query_list[1:] if '.' not in query_list[0] else query_list
     return query_list, file_name
 
-def search_parameters():
+def search_parameters(): #collects parameters for single search instance; multiple searches may be entered
     search_parameters = {}
     keyword = user_input(name='keyword', 
                          prompt='Keyword to search: ',
@@ -143,12 +147,12 @@ def search_parameters():
     
     return search_parameters
     
-def accession_link(queries, db_pep, db_nuc): 
+def accession_link(queries): #link full genome nucleotide records from protein accessions
     start=time.time()
     acc_links={} #a dictionary of {nucelotide record ID : query protein ID}
     
     #b_proteins: records for the queried proteins via a mass fetch request
-    b_proteins = efetch(db = db_pep,
+    b_proteins = efetch(db = 'protein',
                         id=queries,
                         idtype='acc', 
                         rettype='gb', 
@@ -207,17 +211,16 @@ def accession_link(queries, db_pep, db_nuc):
         #GI and non-GI indexed proteins treated identically in linking dict
     return acc_links, time.time()-start
 
-def fetch_CDS(acc_links, db_nuc):
+def fetch_CDS(acc_links): #fetch a stream of genome nucleotide records and process into searchable dicts
     start=time.time()
     
-    nucs = requests.get(efetch(db= db_nuc, 
+    nucs = requests.get(efetch(db= 'nuccore', 
                                id= acc_links.keys(),
                                idtype='acc', 
                                rettype='fasta_cds_na', 
                                retmode='txt'
                                ).url, stream=True)
     
-
     records ={}
     accumulate_record = str()
     for chunk in nucs.iter_content(chunk_size=1024):  #reading 1kb at a time
@@ -258,7 +261,7 @@ def fetch_CDS(acc_links, db_nuc):
             
     return records, time.time()-start
 
-def product_search(linker, record, compiled_searches, margin): 
+def product_search(linker, record, compiled_searches, margin): #exclude records and CDS regions with provided parameters, returning indices to be kept for each record
     start=time.time()
     
     all_proteins=[]
@@ -269,7 +272,7 @@ def product_search(linker, record, compiled_searches, margin):
             all_proteins.append(cds['pseudo'])
             
     catch_inds = []
-    #set up the clipping window, considering all search terms
+    #set up the clipping window for all search terms, and adjust trim 1 search term at a time
     for search in compiled_searches:
         
         if (search['needs_neighbor'] == True) and any(n in str(all_proteins) for n in search['neighbors']):
@@ -286,6 +289,7 @@ def product_search(linker, record, compiled_searches, margin):
                 elif len(i) > 0:
                     direction = i 
             
+            #search 'protein' field of CDS record for partial match with search term
             #for neighbors with unspecified separation
             if search['neighbor_separation'] == '00':
                for loc, protein in enumerate(all_proteins):
@@ -325,7 +329,7 @@ def product_search(linker, record, compiled_searches, margin):
         window = len(all_proteins)
     return window, time.time()-start
 
-def save_clip(record, linker, searches, window, save_to):
+def save_clip(record, linker, searches, window, save_to): #trim and write hit records, and convert excluded records to JSON
     start = time.time()
     if not os.path.exists(save_to):
         os.makedirs(save_to)
@@ -357,9 +361,9 @@ def save_clip(record, linker, searches, window, save_to):
             json.dump(record, file)
     return time.time()-start
 
-def process_selection(selection, compiled_searches, margin, path_out, db_pep, db_nuc):
+def process_selection(selection, compiled_searches, margin, path_out):
     redo=[]
-    links, link_t = accession_link(selection, db_pep, db_nuc)
+    links, link_t = accession_link(selection)
     cleaned={}
     for l in links.keys():
         if 'error' in l:
@@ -369,7 +373,7 @@ def process_selection(selection, compiled_searches, margin, path_out, db_pep, db
             cleaned[l] = links[l]
 
     if type(cleaned) == dict and len(cleaned.keys()) > 0:
-        records, record_t = fetch_CDS(cleaned, db_nuc)
+        records, record_t = fetch_CDS(cleaned)
         elapsed = link_t + record_t
         for linker, record in records.items():
             window, window_t = product_search(linker, record, compiled_searches, margin)
@@ -383,7 +387,7 @@ def process_selection(selection, compiled_searches, margin, path_out, db_pep, db
 
     return elapsed, redo
 
-def use_batches(query_list, file_name, path_out, compiled_searches, margin, db_pep, db_nuc):
+def use_batches(query_list, file_name, path_out, compiled_searches, margin):
     print('\nRun Information','-'*(os.get_terminal_size()[0]-16))
     print(f'{len(query_list)} queries found in {file_name}')
     do=[]
@@ -419,7 +423,7 @@ def use_batches(query_list, file_name, path_out, compiled_searches, margin, db_p
 
         selection = query_list[start : end]
         print(f'\nFetching records {start+1}-{end}')
-        elapsed, redo = process_selection(selection, compiled_searches, margin, path_out, db_pep, db_nuc)
+        elapsed, redo = process_selection(selection, compiled_searches, margin, path_out)
         if len(redo) > 0:
             do.append(redo)
         remaining = len(query_list) - end
@@ -434,7 +438,7 @@ def use_batches(query_list, file_name, path_out, compiled_searches, margin, db_p
     if remaining in range(1, batch_size-1):
         print(f'Running remaining {remaining} queries.')
         selection = query_list[start : len(query_list)]
-        elapsed, redo = process_selection(selection, compiled_searches, margin, path_out, db_pep, db_nuc)
+        elapsed, redo = process_selection(selection, compiled_searches, margin, path_out)
         if len(redo) > 0:
             do.extend(redo)
     else:
@@ -489,8 +493,7 @@ def main(welcome, when):
         logger.debug(f'CWD: {os.getcwd()}')
         logger.debug(f'ENV: {os.environ['CONDA_PREFIX'] if 'CONDA_PREFIX' in os.environ.keys() else None}')
         pass
-    db_pep = 'protein'
-    db_nuc= 'nuccore'
+    
     query_list, file_name, path_out, compiled_searches, margin, p1 = user_information(when)
 
     logger.debug(f'email: {Entrez.email}')
@@ -499,7 +502,7 @@ def main(welcome, when):
     logger.debug(f'searches: {compiled_searches}')
     logger.debug(f'margin: {margin}')
    
-    redo = use_batches(query_list, file_name, path_out, compiled_searches, margin, db_pep, db_nuc)
+    redo = use_batches(query_list, file_name, path_out, compiled_searches, margin)
     failures(redo, path_out)
 
     logger.info(f'Results saved to: {path_out}')

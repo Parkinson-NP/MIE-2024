@@ -40,7 +40,7 @@ def user_information(when):
         path_out = user_input(name='path_out', 
                                    prompt='Full path to your desired save folder: ', 
                                    gate_type='value'
-                                   ).value_received.strip("\"") + '.csv'
+                                   ).value_received.strip("\"")
     else:
         path_out = f'{os.getcwd()}{fsep}mie_2024_outputs{fsep}synthesis'
         if not os.path.exists(path_out):
@@ -83,11 +83,17 @@ def antismash_json_to_AA(filename, smiley):
                     polymer_dict[f'M_{i+1}'] = p
                 
                 products.append(polymer_dict)
+        else:
+            products=[{}]
     return products
 
 def save_results(path_in, path_out, p3, smiles):
     output = [[]]
     header = []
+    place = path_out
+    if not os.path.exists(place):
+        os.makedirs(place)
+
     for result in os.listdir(path_in):
         if 'redo_filter' not in result:
             file=f'{path_in}{fsep}{result}{fsep}{result}.json'
@@ -99,7 +105,7 @@ def save_results(path_in, path_out, p3, smiles):
                     output[0] = header
                 output.append(p.values())
 
-        with open(f'{path_out}{fsep}{p3}.csv', 'w', newline='') as sheet:
+        with open(place+fsep+p3+'.csv', 'w', newline='') as sheet:
             writer = csv.writer(sheet)
             writer.writerows(output)
 
@@ -123,7 +129,7 @@ def main(welcome, when):
     
     path_in, path_out, p3, smiles = user_information(when)
     save_results(path_in, path_out, p3, smiles)
-    logger.info(f"Results saved to: {fsep}", path_out+fsep+p3+'.csv')
+    logger.info(f"Results saved to: {path_out+fsep+p3+'.csv'}")
     logger.info(f'Log saved to: {log_loc}')
     
 if __name__ == "__main__":

@@ -93,7 +93,7 @@ def check_pred(outgo):
   
     if len(record['areas']) < 1:
         logger.info(f'\tNo predictions made for {name}.')
-        redo = name.split('nuccore_of_')[-1].strip('.json')
+        redo = name.strip('.json')
 
     return redo
 
