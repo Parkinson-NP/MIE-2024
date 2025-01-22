@@ -84,7 +84,7 @@ def antismash_json_to_AA(filename, smiley):
                 
                 products.append(polymer_dict)
         else:
-            products=[{}]
+            products=[{'Product':nucleotide_source}]
     return products
 
 def save_results(path_in, path_out, p3, smiles):

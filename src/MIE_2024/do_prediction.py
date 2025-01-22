@@ -94,8 +94,9 @@ def check_pred(outgo):
     if len(record['areas']) < 1:
         logger.info(f'\tNo predictions made for {name}.')
         redo = name.strip('.json')
-
-    return redo
+        return redo
+    else:
+        return '' 
 
 def run(files, path_in, path_out,  p2):
     redo=[]

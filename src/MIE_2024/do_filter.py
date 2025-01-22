@@ -115,10 +115,10 @@ def read_input(path_in, col): #custom CSV reader, designed for NCBI BLAST-P resu
             if len(row) > 0:
                 query_list.append(row[col-1])
         for r, row in enumerate(query_list):
-            if len(row) != len(query_list[r-1]):
-                del query_list[r]
-        logger.info(f'Accession column contents found: {query_list[0:5]} ...')
+            if len(row) < 5:
+               del query_list[r]
     query_list = query_list[1:] if '.' not in query_list[0] else query_list
+    logger.info(f'Accession column contents found: {query_list[0:5]} ...')
     return query_list, file_name
 
 def search_parameters(): #collects parameters for single search instance; multiple searches may be entered
@@ -168,54 +168,57 @@ def accession_link(queries): #link full genome nucleotide records from protein a
                                      ].split('VERSION')[1
                                      ].split('\n')[0
                                      ].split()[0]    
-                                              
+  
+        if 'DBSOURCE' in p_record:
+            nuc_accession = p_record.split('KEYWORDS')[0
+                                   ].split('DBSOURCE')[1
+                                   ].split()[1]
         if 'RefSeq.' in p_record: #RefSeq. indicates GI number usage
             try:
                 s = json.load(esearch(db = 'protein',
                                     term = p_record.split('KEYWORDS')[0
                                             ].split('VERSION')[-1].strip(),
-                                    usehistory='y',
                                     rettype='uilist',
                                     retmode='json'),
                                     strict=False
                                     )['esearchresult']
-                
+           
                 l = json.load(elink(dbfrom = 'protein',
                                     db = 'nuccore',
                                     linkname = 'protein_nuccore',
                                     id = s['idlist'][0],
-                                    usehistory='y', 
-                                    webenv=s['webenv'], 
-                                    querykey=s['querykey'],
                                     retmode='json', 
                                     idtype='acc'),
                                     strict=False)
-                
+               
             except Exception as error:
                 l={'linksets':[], 'ERROR':error}
-
             #nucleotide record of GI indexed protein found by search/link
             if len(l['linksets']) < 1:
                 seeme = l['ERROR']
                 nuc_accession = f'{p_accession}_error'
                 logger.debug(f'{p_accession}: {seeme}')
             else:
-                nuc_accession = l['linksets'][0]['linksetdbs'][0]['links'][0]
-        else:
-            nuc_accession = p_record.split('KEYWORDS')[0
-                                   ].split('DBSOURCE')[1
-                                   ].split()[1]
+                try:
+                    nuc_accession = l['linksets'][0]['linksetdbs'][0]['links'][0]
+                except Exception as error:
+                    l={'linksets':[], 'ERROR':error}
+                    seeme = l['ERROR']
+                    nuc_accession = f'{p_accession}_error'
+                    logger.debug(f'{p_accession}: {l['ERROR']}')
+
             #nucleotide record of non-GI indexed protein found by text parse
-                                          
-        acc_links[f'{nuc_accession}'] = p_accession
+            acc_links[f'{nuc_accession}'] = p_accession
         #GI and non-GI indexed proteins treated identically in linking dict
     return acc_links, time.time()-start
 
 def fetch_CDS(acc_links): #fetch a stream of genome nucleotide records and process into searchable dicts
     start=time.time()
-    
-    nucs = requests.get(efetch(db= 'nuccore', 
-                               id= acc_links.keys(),
+    idlist = acc_links.keys()
+    logger.debug(f'nucleotide fetch IDs: {idlist}')
+
+    nucs = requests.get(efetch(db='nuccore', 
+                               id=idlist,
                                idtype='acc', 
                                rettype='fasta_cds_na', 
                                retmode='txt'
@@ -224,8 +227,7 @@ def fetch_CDS(acc_links): #fetch a stream of genome nucleotide records and proce
     records ={}
     accumulate_record = str()
     for chunk in nucs.iter_content(chunk_size=1024):  #reading 1kb at a time
-        chunk = chunk.decode('utf-8')
-                  
+        chunk = chunk.decode('utf-8')         
         if '\n\n' not in chunk:
             accumulate_record += chunk
           
@@ -258,7 +260,7 @@ def fetch_CDS(acc_links): #fetch a stream of genome nucleotide records and proce
             #continue after break between records
             accumulate_record = chunk.partition('\n\n')[2]
             records[linker] = n_proteins
-            
+    logger.debug(f'successful links fetched: {records.keys()}')
     return records, time.time()-start
 
 def product_search(linker, record, compiled_searches, margin): #exclude records and CDS regions with provided parameters, returning indices to be kept for each record
@@ -392,7 +394,7 @@ def use_batches(query_list, file_name, path_out, compiled_searches, margin):
     print(f'{len(query_list)} queries found in {file_name}')
     do=[]
 
-    if len(query_list) > 5:
+    if len(query_list) > 10:
         print('Warning: Large Query Request')
         batch = user_input(name='batch',
                            prompt='Would you like to estimate your job time by running a batch? ',
@@ -436,7 +438,8 @@ def use_batches(query_list, file_name, path_out, compiled_searches, margin):
             run = 'stop'
 
     if remaining in range(1, batch_size-1):
-        print(f'Running remaining {remaining} queries.')
+        
+        (f'Running remaining {remaining} queries.')
         selection = query_list[start : len(query_list)]
         elapsed, redo = process_selection(selection, compiled_searches, margin, path_out)
         if len(redo) > 0:
