@@ -204,9 +204,12 @@ def accession_link(queries): #link full genome nucleotide records from protein a
                 except Exception as error:
                     l={'linksets':[], 'ERROR':error}
                     seeme = l['ERROR']
-                    nuc_accession = f'{p_accession}_error'
-                    logger.debug(f'{p_accession}: {l['ERROR']}')
-
+                nuc_accession = f'{p_accession}_error'
+                logger.debug(f'{p_accession}: {seeme}')
+        else:
+            nuc_accession = p_record.split('KEYWORDS')[0
+                                   ].split('DBSOURCE')[1
+                                   ].split()[1]
             #nucleotide record of non-GI indexed protein found by text parse
             acc_links[f'{nuc_accession}'] = p_accession
         #GI and non-GI indexed proteins treated identically in linking dict
